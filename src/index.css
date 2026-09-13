@@ -1,0 +1,199 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-heading: "Orbitron", "Space Grotesk", sans-serif;
+    --font-sans:
+      "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto,
+      "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic",
+      sans-serif;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #050811;
+    color: #f1f5f9;
+  }
+}
+
+/* Futuristic Glow Effects */
+.glow-cyan {
+  box-shadow:
+    0 0 25px -5px rgba(0, 240, 255, 0.4),
+    0 0 10px -2px rgba(0, 240, 255, 0.2);
+}
+
+.glow-blue {
+  box-shadow:
+    0 0 25px -5px rgba(59, 130, 246, 0.4),
+    0 0 10px -2px rgba(59, 130, 246, 0.2);
+}
+
+.glow-amber {
+  box-shadow:
+    0 0 25px -5px rgba(245, 158, 11, 0.4),
+    0 0 10px -2px rgba(245, 158, 11, 0.2);
+}
+
+.glow-emerald {
+  box-shadow:
+    0 0 25px -5px rgba(16, 185, 129, 0.4),
+    0 0 10px -2px rgba(16, 185, 129, 0.2);
+}
+
+.glow-rose {
+  box-shadow:
+    0 0 25px -5px rgba(244, 63, 94, 0.4),
+    0 0 10px -2px rgba(244, 63, 94, 0.2);
+}
+
+.text-glow-cyan {
+  text-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+}
+
+.text-glow-amber {
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+}
+
+/* Glassmorphic Cyber Display */
+.glass-panel {
+  background: rgba(10, 17, 40, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+}
+
+.glass-panel-subtle {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-warning {
+  background: rgba(30, 18, 10, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+/* Perspective Grid */
+.cyber-grid {
+  background-image:
+    linear-gradient(to right, rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* Spatial Museum Architecture & 2.5D Engine */
+.museum-viewport {
+  perspective: 1200px;
+  perspective-origin: 50% 45%;
+  overflow: hidden;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* Floor Grid & Reflection */
+.museum-floor {
+  background:
+    linear-gradient(to top, rgba(5, 8, 17, 0.95), rgba(10, 17, 40, 0.4)),
+    linear-gradient(to right, rgba(0, 240, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 240, 255, 0.08) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    60px 60px,
+    60px 60px;
+  transform: rotateX(75deg);
+  transform-origin: 50% 100%;
+}
+
+/* Corridor & Wall Gradients */
+.museum-wall-left {
+  background: linear-gradient(
+    90deg,
+    rgba(8, 14, 30, 0.95) 0%,
+    rgba(5, 8, 17, 0.3) 100%
+  );
+  border-right: 1px solid rgba(0, 240, 255, 0.15);
+}
+
+.museum-wall-right {
+  background: linear-gradient(
+    270deg,
+    rgba(8, 14, 30, 0.95) 0%,
+    rgba(5, 8, 17, 0.3) 100%
+  );
+  border-left: 1px solid rgba(0, 240, 255, 0.15);
+}
+
+.museum-ceiling {
+  background:
+    linear-gradient(to bottom, rgba(3, 5, 12, 0.98), rgba(8, 14, 30, 0.6)),
+    linear-gradient(to right, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    120px 100%;
+  transform: rotateX(-75deg);
+  transform-origin: 50% 0%;
+}
+
+/* Museum Lighting Beam */
+.light-beam-ceiling {
+  background: radial-gradient(
+    ellipse at top,
+    rgba(0, 240, 255, 0.25) 0%,
+    transparent 70%
+  );
+}
+
+.spotlight-exhibit {
+  box-shadow:
+    0 -20px 50px -10px rgba(0, 240, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Exhibit Stand & Plaque (실제 박물관 전시물 느낌) */
+.exhibit-pedestal {
+  background: linear-gradient(180deg, #0d1730 0%, #060a16 100%);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  box-shadow:
+    0 15px 35px -5px rgba(0, 0, 0, 0.8),
+    0 0 15px -3px rgba(0, 240, 255, 0.15);
+}
+
+.exhibit-caption-plaque {
+  background: rgba(13, 23, 48, 0.85);
+  backdrop-filter: blur(8px);
+  border-left: 3px solid #00f0ff;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050811;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00f0ff;
+}
