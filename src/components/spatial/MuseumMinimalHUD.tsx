@@ -5,6 +5,8 @@ interface MuseumMinimalHUDProps {
   currentZoneNameKo: string;
   currentZoneNameEn: string;
   progress: number;
+  visitedCount: number;
+  inspectedCount: number;
   onOpenMap: () => void;
   onOpenGlossary: () => void;
   onReplayPortal: () => void;
@@ -14,6 +16,8 @@ export const MuseumMinimalHUD: React.FC<MuseumMinimalHUDProps> = ({
   currentZoneNameKo,
   currentZoneNameEn,
   progress,
+  visitedCount,
+  inspectedCount,
   onOpenMap,
   onOpenGlossary,
   onReplayPortal,
@@ -54,7 +58,10 @@ export const MuseumMinimalHUD: React.FC<MuseumMinimalHUDProps> = ({
             />
           </div>
           <span className="text-[11px] font-mono text-cyan-300 font-bold">
-            {percent}% PROGRESSED
+            이동 {percent}%
+          </span>
+          <span className="text-[10px] font-mono text-slate-400">
+            방문 {visitedCount} · 열람 {inspectedCount}
           </span>
         </div>
 

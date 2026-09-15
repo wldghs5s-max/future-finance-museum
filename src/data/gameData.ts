@@ -42,10 +42,10 @@ export const OFFICIAL_SCENARIOS: OfficialScenario[] = [
   {
     id: "status_quo",
     nameKo: "현재 추세 유지",
-    debtRatio2055: { raw: 202.0, display: "202.0%" },
-    badge: "위험 수준 누적",
+    debtRatio2055: { raw: 180, display: "180% (PERI 사전 설명)" },
+    badge: "원문 미확인 202%는 사용하지 않음",
     summary:
-      "새로운 개혁이나 제도 변화 없이 현행 지출 및 세입 구조를 유지하는 경우",
+      "원문 본문에 2055년 202.0%는 없음. PERI 청소년 사전은 ‘지금대로’ 2055년 180%를 게임 규칙으로 설명함",
     associatedPolicies: ["status_quo_maintain"],
     pyiQualitativeState: {
       status: "경고",

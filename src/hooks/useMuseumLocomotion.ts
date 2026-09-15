@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { SpatialZoneId } from "../types/spatial";
+import { MAX_WORLD_Z, zoneInfoForCamera } from "../data/spaceLayout";
 
 export interface LocomotionOptions {
   maxWorldZ?: number;
@@ -23,8 +24,8 @@ export interface LocomotionState {
   jumpTo: (z: number) => void;
 }
 
-// 전체 14개 주요 공간 총 월드 깊이: 26,500px
-export const DEFAULT_MAX_WORLD_Z = 26500;
+// 지도 12개 구역 + 입장 오프닝. 월드 깊이는 spaceLayout.MAX_WORLD_Z
+export const DEFAULT_MAX_WORLD_Z = MAX_WORLD_Z;
 
 export function useMuseumLocomotion(
   options?: LocomotionOptions,
@@ -51,96 +52,7 @@ export function useMuseumLocomotion(
     lookTranslateY: 0,
   });
 
-  // 14개 주요 공간 구역 판별 로직 (Z 좌표 기준)
-  const getZoneInfo = (
-    z: number,
-  ): { id: SpatialZoneId; nameKo: string; nameEn: string } => {
-    if (z < 600) {
-      return {
-        id: "lobby",
-        nameKo: "박물관 정문 입구",
-        nameEn: "MUSEUM ENTRANCE",
-      };
-    } else if (z < 2200) {
-      return {
-        id: "lobby",
-        nameKo: "재정미래관 중앙 로비",
-        nameEn: "GRAND LOBBY",
-      };
-    } else if (z < 4800) {
-      return {
-        id: "hall_01",
-        nameKo: "HALL 01: 인구변화 전시장",
-        nameEn: "HALL 01: DEMOGRAPHY",
-      };
-    } else if (z < 6000) {
-      return {
-        id: "corridor_01",
-        nameKo: "세대·복지 회랑 (복도 01)",
-        nameEn: "CORRIDOR 01: WELFARE TRANSIT",
-      };
-    } else if (z < 8800) {
-      return {
-        id: "hall_02",
-        nameKo: "HALL 02: 복지 및 연금 전시장",
-        nameEn: "HALL 02: WELFARE & PENSION",
-      };
-    } else if (z < 10000) {
-      return {
-        id: "corridor_02",
-        nameKo: "기후 회랑 (복도 02)",
-        nameEn: "CORRIDOR 02: CLIMATE TRANSIT",
-      };
-    } else if (z < 12800) {
-      return {
-        id: "hall_03",
-        nameKo: "HALL 03: 환경 문제 전시장",
-        nameEn: "HALL 03: ENVIRONMENT & CLIMATE",
-      };
-    } else if (z < 14000) {
-      return {
-        id: "corridor_03",
-        nameKo: "AI 회랑 (복도 03)",
-        nameEn: "CORRIDOR 03: AI TRANSIT",
-      };
-    } else if (z < 16800) {
-      return {
-        id: "hall_04",
-        nameKo: "HALL 04: AI 기술 전시장",
-        nameEn: "HALL 04: AI & FUTURE LABOR",
-      };
-    } else if (z < 18000) {
-      return {
-        id: "corridor_04",
-        nameKo: "악어의 입 회랑 (복도 04)",
-        nameEn: "CORRIDOR 04: FISCAL TRAJECTORY",
-      };
-    } else if (z < 20800) {
-      return {
-        id: "hall_05",
-        nameKo: "HALL 05: 장기 재정 전망관",
-        nameEn: "HALL 05: FISCAL OUTLOOK",
-      };
-    } else if (z < 22000) {
-      return {
-        id: "corridor_05",
-        nameKo: "시뮬레이션 게이트 회랑 (복도 05)",
-        nameEn: "CORRIDOR 05: LAB ACCESS",
-      };
-    } else if (z < 25200) {
-      return {
-        id: "hall_06",
-        nameKo: "HALL 06: 재정 시뮬레이션관 (나라살림게임 랩)",
-        nameEn: "HALL 06: FISCAL LAB",
-      };
-    } else {
-      return {
-        id: "exit",
-        nameKo: "전시 관람 종료 라운지",
-        nameEn: "MUSEUM EXIT & SUMMARY",
-      };
-    }
-  };
+  const getZoneInfo = (z: number) => zoneInfoForCamera(z);
 
   const markWalking = useCallback(() => {
     setIsWalking(true);
@@ -157,6 +69,8 @@ export function useMuseumLocomotion(
     (z: number) => {
       const clamped = Math.max(0, Math.min(z, maxZ));
       targetZRef.current = clamped;
+      cameraZRef.current = clamped;
+      setCameraZ(clamped);
       markWalking();
     },
     [maxZ, markWalking],

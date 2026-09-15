@@ -516,7 +516,6 @@ export const FiscalGameSection: React.FC<FiscalGameSectionProps> = ({
         </div>
       </div>
 
-      {/* 4. 전시장 출구: 박물관 퇴장 라운지로 이동하는 게이트 */}
       <div className="relative z-10 max-w-6xl mx-auto mt-16 pt-10 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-6">
         <button
           onClick={() => {
@@ -531,7 +530,7 @@ export const FiscalGameSection: React.FC<FiscalGameSectionProps> = ({
 
         <button
           onClick={() => {
-            onNavigate("exit");
+            onNavigate("lobby");
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
           className="flex items-center gap-3 px-6 py-4 rounded-xl bg-gradient-to-r from-cyan-950/80 to-slate-900 border border-cyan-500/40 hover:border-cyan-400 hover:glow-cyan text-left group transition cursor-pointer"
@@ -539,12 +538,12 @@ export const FiscalGameSection: React.FC<FiscalGameSectionProps> = ({
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-[10px] font-mono tracking-widest text-cyan-400 uppercase">
-                EXIT MUSEUM
+                OTHER HALLS
               </span>
               <Footprints className="w-3.5 h-3.5 text-cyan-400" />
             </div>
             <h4 className="text-sm font-bold text-white group-hover:text-cyan-300 transition">
-              전시 관람 종료 라운지로 퇴장하기
+              다른 전시관 둘러보기
             </h4>
           </div>
           <div className="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300 group-hover:translate-x-1 transition">

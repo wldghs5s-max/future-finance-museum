@@ -1,39 +1,38 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SpatialZoneId, SPATIAL_ZONES } from "../../types/spatial";
+import { ZONE_CAMERA_Z_MAP as LAYOUT_CAMERA_Z } from "../../data/spaceLayout";
+import { MUSEUM_SPACE_GUIDE } from "../../types/exhibit";
 import { Map, X, Compass, ArrowRight, CheckCircle2 } from "lucide-react";
 
 interface MuseumMapModalProps {
   isOpen: boolean;
   currentZone: SpatialZoneId;
   visitedZones: Set<SpatialZoneId>;
+  inspectedCount: number;
+  progress: number;
   onClose: () => void;
   onSelectZone: (zoneId: SpatialZoneId) => void;
 }
 
-// 전체 14개 주요 공간 구역별 카메라 Z 좌표 매핑 (부드러운 Camera Travel 목적지)
-export const ZONE_CAMERA_Z_MAP: Record<string, number> = {
-  lobby: 1200,
-  hall_01: 3200,
-  corridor_01: 5300,
-  hall_02: 7200,
-  corridor_02: 9300,
-  hall_03: 11200,
-  corridor_03: 13300,
-  hall_04: 15200,
-  corridor_04: 17300,
-  hall_05: 19200,
-  corridor_05: 21300,
-  hall_06: 23200,
-  exit: 25800,
-};
+export const ZONE_CAMERA_Z_MAP: Record<string, number> = LAYOUT_CAMERA_Z;
 
 export const MuseumMapModal: React.FC<MuseumMapModalProps> = ({
   isOpen,
   currentZone,
   visitedZones,
+  inspectedCount,
+  progress,
   onClose,
   onSelectZone,
 }) => {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
@@ -50,7 +49,7 @@ export const MuseumMapModal: React.FC<MuseumMapModalProps> = ({
                 재정미래박물관 도면 및 위치 이동 (MUSEUM MAP)
               </h3>
               <p className="text-[10px] font-mono text-slate-400 uppercase">
-                14 MAJOR SPATIAL ZONES • SMOOTH CAMERA TRAVEL
+                {MUSEUM_SPACE_GUIDE.mapZoneCount} ZONES · 로비·6관·5회랑
               </p>
             </div>
           </div>
@@ -66,10 +65,11 @@ export const MuseumMapModal: React.FC<MuseumMapModalProps> = ({
         {/* 박물관 도면 및 공간 리스트 */}
         <div className="p-6 overflow-y-auto space-y-4">
           <div className="p-3.5 rounded-xl bg-cyan-950/30 border border-cyan-500/30 text-xs text-cyan-200 font-sans leading-relaxed">
-            💡 <strong>도면 안내</strong>: 박물관의 전체 14개 주요 공간(로비,
-            6대 전시장, 5대 전이 회랑, 퇴장 라운지)이 단일 좌표계로 완비되어
-            있습니다. 원하시는 구역을 선택하시면 카메라가 미끄러지듯 이동(Camera
-            Travel)합니다.
+            지도 항목은 {MUSEUM_SPACE_GUIDE.mapZoneCount}개입니다.{" "}
+            {MUSEUM_SPACE_GUIDE.breakdown}. {MUSEUM_SPACE_GUIDE.introNote} 이동
+            진행률({Math.round(progress * 100)}%)과 구역 방문({visitedZones.size}
+            /{MUSEUM_SPACE_GUIDE.mapZoneCount}), 전시 상세 열람({inspectedCount})은
+            서로 다른 기록입니다.
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
@@ -146,7 +146,9 @@ export const MuseumMapModal: React.FC<MuseumMapModalProps> = ({
 
         {/* 모달 하단 닫기 */}
         <div className="px-6 py-3 border-t border-slate-800 bg-slate-900/60 flex items-center justify-between text-xs font-mono text-slate-400">
-          <span>SPATIAL LOCOMOTION ENGINE • V1 PROTOTYPE</span>
+          <span className="max-w-xl leading-relaxed text-[10px] text-slate-500">
+            {MUSEUM_SPACE_GUIDE.civicNote}
+          </span>
           <button
             onClick={onClose}
             className="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer"

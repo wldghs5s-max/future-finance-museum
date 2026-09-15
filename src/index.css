@@ -197,3 +197,72 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #00f0ff;
 }
+
+/* 입장 영상: 원본 비율을 유지한 채 화면을 채우고, 그 위에 좌우 장막을 겹침 */
+.portal-video-stage {
+  position: absolute;
+  inset: 0;
+  background: #050811;
+}
+
+.portal-video-frame {
+  position: absolute;
+  inset: 0;
+}
+
+.portal-video-clip {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.portal-video-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* 하단 워터마크 높이에 중심을 둔 좌우 커튼. 중앙 포탈은 비움 */
+  background:
+    radial-gradient(
+      ellipse 34% 95% at 0% 78%,
+      rgb(5 8 17 / 0.76) 0%,
+      rgb(5 8 17 / 0.72) 32%,
+      rgb(5 8 17 / 0.4) 54%,
+      rgb(5 8 17 / 0.12) 72%,
+      rgb(5 8 17 / 0) 88%
+    ),
+    radial-gradient(
+      ellipse 34% 95% at 100% 78%,
+      rgb(5 8 17 / 0.76) 0%,
+      rgb(5 8 17 / 0.72) 32%,
+      rgb(5 8 17 / 0.4) 54%,
+      rgb(5 8 17 / 0.12) 72%,
+      rgb(5 8 17 / 0) 88%
+    );
+}
+
+@media (max-aspect-ratio: 3 / 4) {
+  /* 세로 화면에서는 워터마크가 이미 잘리므로 장막을 얇게 유지 */
+  .portal-video-shade {
+    background:
+      radial-gradient(
+        ellipse 18% 90% at 0% 78%,
+        rgb(5 8 17 / 0.5) 0%,
+        rgb(5 8 17 / 0.28) 42%,
+        rgb(5 8 17 / 0) 78%
+      ),
+      radial-gradient(
+        ellipse 18% 90% at 100% 78%,
+        rgb(5 8 17 / 0.5) 0%,
+        rgb(5 8 17 / 0.28) 42%,
+        rgb(5 8 17 / 0) 78%
+      );
+  }
+}
+
+.village-zone-focus {
+  box-shadow: inset 0 0 0 3px rgba(103, 232, 249, 0.9);
+  background: rgba(8, 47, 73, 0.14);
+  pointer-events: none;
+}
