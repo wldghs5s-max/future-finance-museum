@@ -2,14 +2,18 @@ import assert from "node:assert/strict";
 import {
   CORRIDOR_EXHIBIT_IDS,
   CORRIDOR_LAYOUT,
+  CORRIDOR_NEXT_GATE,
   EXHIBIT_POSES,
   FIRST_AFTER_GATE,
   FLOORS,
   GATES,
+  GATE_VIEW,
   MAX_WORLD_Z,
+  MUSEUM_ENTRANCE_Z,
   ZONE_CAMERA_Z_MAP,
   doorOpenAmount,
   gateOpacity,
+  gateViewCameraZ,
   isArchitectureMounted,
   isBlockedByClosedGate,
   isGateOpenEnough,
@@ -143,18 +147,17 @@ for (const id of CORRIDOR_EXHIBIT_IDS) {
 
   const mapZone = id.replace("exhibit_", "") as keyof typeof ZONE_CAMERA_Z_MAP;
   const mapZ = ZONE_CAMERA_Z_MAP[mapZone];
-  assert.equal(mapZ, readCameraZ(id), `${id} map landing moved`);
-  const mapped = exhibitMotion(pose.z + mapZ, pose.x, pose.y, "corridor");
-  assert.ok(mapped.inspectable, `map landing misses ${id}`);
-  assert.ok(mapped.exitT < 0.15);
-  assert.equal(mapped.driftX, 0);
-
-  const leaving = exhibitMotion(-80, pose.x, pose.y, "corridor");
-  assert.equal(leaving.driftX, 0, `${id} exit must not shove into the wall`);
-  const afterExit = panelWorldXRange({ ...pose, x: pose.x + leaving.driftX });
-  assert.ok(afterExit.min > -CORRIDOR_LAYOUT.wallX + 24);
-  assert.ok(afterExit.max < CORRIDOR_LAYOUT.wallX - 24);
+  const nextGateId = CORRIDOR_NEXT_GATE[id];
+  const nextGate = GATES.find((gate) => gate.id === nextGateId);
+  assert.ok(nextGate, nextGateId);
+  assert.equal(mapZ, gateViewCameraZ(nextGateId), `${id} map should view ${nextGateId}`);
+  const dist = nextGate.z + mapZ;
+  assert.ok(gateOpacity(dist) > 0.5, `map landing misses gate ${nextGateId}`);
+  assert.ok(doorOpenAmount(dist) < 0.95, `map landing already hides ${nextGateId} doors`);
 }
+
+assert.equal(MUSEUM_ENTRANCE_Z, 80);
+assert.ok(GATE_VIEW > -900 && GATE_VIEW < 0);
 
 assert.ok(
   FLOORS.every((floor) => floor.height < 8000),

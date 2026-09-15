@@ -1,6 +1,5 @@
 import React from "react";
 import { DataExhibit } from "./DataExhibit";
-import { CorridorScene } from "./CorridorScene";
 import { HallChoicesBoard } from "./HallChoicesBoard";
 
 interface Hall02ExhibitsProps {
@@ -20,6 +19,5 @@ export const Hall02Exhibits: React.FC<Hall02ExhibitsProps> = ({
     <DataExhibit id="exhibit_2e" cameraZ={cameraZ} onInspect={onInspect} accent="emerald" />
     <DataExhibit id="exhibit_2c" cameraZ={cameraZ} onInspect={onInspect} accent="sky" />
     <HallChoicesBoard id="exhibit_2_choices" cameraZ={cameraZ} onInspect={onInspect} />
-    <CorridorScene id="exhibit_corridor_02" cameraZ={cameraZ} />
   </>
 );

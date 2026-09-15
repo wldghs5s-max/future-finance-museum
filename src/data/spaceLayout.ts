@@ -31,6 +31,15 @@ export const GATES = [
 
 export type GateId = (typeof GATES)[number]["id"];
 
+/** 문 장식을 읽기 좋은 거리. 거대한 평면을 만들지 않고 기존 게이트 프레임을 본다. */
+export const GATE_VIEW = -520;
+
+export function gateViewCameraZ(gateId: GateId): number {
+  const gate = GATES.find((item) => item.id === gateId);
+  if (!gate) throw new Error(`Missing gate ${gateId}`);
+  return Math.round(-gate.z + GATE_VIEW);
+}
+
 export interface ExhibitPose {
   x: number;
   y: number;
@@ -114,15 +123,15 @@ export const MAX_WORLD_Z = 30600;
 export const ZONE_CAMERA_Z_MAP: Record<SpatialZoneId, number> = {
   lobby: readCameraZ("exhibit_lobby_monument"),
   hall_01: readCameraZ("exhibit_1d"),
-  corridor_01: readCameraZ("exhibit_corridor_01"),
+  corridor_01: gateViewCameraZ("hall02"),
   hall_02: readCameraZ("exhibit_2d"),
-  corridor_02: readCameraZ("exhibit_corridor_02"),
+  corridor_02: gateViewCameraZ("hall03"),
   hall_03: readCameraZ("exhibit_3d"),
-  corridor_03: readCameraZ("exhibit_corridor_03"),
+  corridor_03: gateViewCameraZ("hall04"),
   hall_04: readCameraZ("exhibit_4d"),
-  corridor_04: readCameraZ("exhibit_corridor_04"),
+  corridor_04: gateViewCameraZ("hall05"),
   hall_05: readCameraZ("exhibit_5d"),
-  corridor_05: readCameraZ("exhibit_corridor_05"),
+  corridor_05: gateViewCameraZ("hall06"),
   hall_06: readCameraZ("exhibit_6a"),
 };
 
@@ -142,6 +151,8 @@ export const ZONE_BREAKS: { until: number; id: SpatialZoneId; nameKo: string; na
     { until: 26700, id: "corridor_05", nameKo: "시뮬레이션 게이트 회랑 (복도 05)", nameEn: "CORRIDOR 05: LAB ACCESS" },
     { until: 99999, id: "hall_06", nameKo: "HALL 06: 나라살림게임 랩", nameEn: "HALL 06: FISCAL LAB" },
   ];
+
+export const MUSEUM_ENTRANCE_Z = 80;
 
 export function readCameraZ(exhibitId: string): number {
   const pose = EXHIBIT_POSES[exhibitId];
@@ -233,6 +244,21 @@ export const CORRIDOR_EXHIBIT_IDS = [
   "exhibit_corridor_04",
   "exhibit_corridor_05",
 ] as const;
+
+export type CorridorExhibitId = (typeof CORRIDOR_EXHIBIT_IDS)[number];
+
+/** 회랑 이미지가 붙는 다음 게이트. corridor01→hall02 … corridor05→hall06 */
+export const CORRIDOR_NEXT_GATE: Record<CorridorExhibitId, GateId> = {
+  exhibit_corridor_01: "hall02",
+  exhibit_corridor_02: "hall03",
+  exhibit_corridor_03: "hall04",
+  exhibit_corridor_04: "hall05",
+  exhibit_corridor_05: "hall06",
+};
+
+export function corridorExhibitForGate(gateId: GateId): CorridorExhibitId | undefined {
+  return CORRIDOR_EXHIBIT_IDS.find((id) => CORRIDOR_NEXT_GATE[id] === gateId);
+}
 
 export const CORRIDOR_WALLS = [
   { z: -7000, exhibitZ: -6500, side: "left", tone: "amber", forward: "HALL 02 WELFARE & PENSION" },

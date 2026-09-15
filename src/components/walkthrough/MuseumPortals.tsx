@@ -1,5 +1,14 @@
 import React from "react";
-import { GATES, clamp01, doorOpenAmount, gateOpacity } from "../../data/spaceLayout";
+import {
+  GATES,
+  GateId,
+  clamp01,
+  corridorExhibitForGate,
+  doorOpenAmount,
+  gateOpacity,
+} from "../../data/spaceLayout";
+import { generatedVisualFor } from "../../data/museumImages";
+import { getExhibit } from "../../data/walkthroughData";
 
 interface MuseumPortalsProps {
   cameraZ: number;
@@ -67,6 +76,44 @@ function DoorOrnament({ side }: { side: "left" | "right" }) {
   );
 }
 
+function DoorThemePlate({
+  gateId,
+  side,
+}: {
+  gateId: GateId;
+  side: "left" | "right";
+}) {
+  const exhibitId = corridorExhibitForGate(gateId);
+  if (!exhibitId) return null;
+  const exhibit = getExhibit(exhibitId);
+  const visual = generatedVisualFor(exhibitId);
+  if (!exhibit || !visual) return null;
+
+  return (
+    <div
+      className={`absolute top-14 w-[68%] overflow-hidden rounded-lg border border-white/20 bg-black/35 ${
+        side === "left" ? "left-8" : "right-8"
+      }`}
+      data-testid={`gate-theme-${gateId}`}
+    >
+      <div className="relative aspect-video">
+        <img
+          src={visual.src}
+          alt=""
+          width={480}
+          height={270}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      </div>
+      {side === "right" && (
+        <p className="px-2 py-1.5 text-[10px] leading-snug text-white/95">
+          {exhibit.titleKo}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export const MuseumPortals: React.FC<MuseumPortalsProps> = ({ cameraZ }) => (
   <>
     {GATES.map((gate) => {
@@ -79,6 +126,8 @@ export const MuseumPortals: React.FC<MuseumPortalsProps> = ({ cameraZ }) => (
       const signScale = 1 - 0.46 * near;
       const signLift = -8 - 36 * near;
       const signFade = dist > 40 ? Math.max(0, 1 - (dist - 40) / 180) : 1;
+      const approachId = corridorExhibitForGate(gate.id);
+      const approach = approachId ? getExhibit(approachId) : undefined;
 
       return (
         <div
@@ -110,6 +159,11 @@ export const MuseumPortals: React.FC<MuseumPortalsProps> = ({ cameraZ }) => (
                 <div className="text-xl font-black text-white tracking-wide">
                   {theme.name}
                 </div>
+                {approach && (
+                  <p className="mt-1.5 text-[11px] leading-snug text-slate-200">
+                    {approach.titleKo} · {approach.summary}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -122,6 +176,7 @@ export const MuseumPortals: React.FC<MuseumPortalsProps> = ({ cameraZ }) => (
                 className={`absolute top-0 left-0 w-[460px] h-full bg-gradient-to-r ${theme.fill} border-r-2 border-white/15 flex items-center justify-end`}
                 style={{ transform: `translateX(${-480 * open}px)` }}
               >
+                <DoorThemePlate gateId={gate.id} side="left" />
                 <DoorOrnament side="left" />
               </div>
               <div
@@ -129,9 +184,9 @@ export const MuseumPortals: React.FC<MuseumPortalsProps> = ({ cameraZ }) => (
                 style={{ transform: `translateX(${480 * open}px)` }}
               >
                 <DoorOrnament side="right" />
+                <DoorThemePlate gateId={gate.id} side="right" />
               </div>
             </div>
-
           </div>
         </div>
       );
