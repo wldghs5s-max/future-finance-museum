@@ -158,6 +158,15 @@ for (const id of CORRIDOR_EXHIBIT_IDS) {
 
 assert.equal(MUSEUM_ENTRANCE_Z, 80);
 assert.ok(GATE_VIEW > -900 && GATE_VIEW < 0);
+assert.equal(MAX_WORLD_Z, 29920);
+assert.ok(CORRIDOR_LAYOUT.wallLength <= 720);
+assert.ok(CORRIDOR_LAYOUT.wallX <= 520);
+
+const lastPose = EXHIBIT_POSES.exhibit_6d;
+const atMax = exhibitMotion(lastPose.z + MAX_WORLD_Z, lastPose.x, lastPose.y);
+assert.ok(atMax.opacity > 0.8, "last exhibit must stay visible at max Z");
+assert.ok(atMax.exitT < 0.05, "last exhibit must not have exited at max Z");
+assert.equal(isExhibitMounted(lastPose.z + MAX_WORLD_Z), true);
 
 assert.ok(
   FLOORS.every((floor) => floor.height < 8000),

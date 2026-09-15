@@ -79,6 +79,7 @@ export const DataExhibit: React.FC<DataExhibitProps> = ({
       width={pose.width}
       title={exhibit.titleKo}
       exhibitCode={exhibit.code}
+      interactive={Boolean(onLobbyWarp)}
       onInspect={deep ? () => onInspect(id) : undefined}
     >
       <div
@@ -126,7 +127,7 @@ export const DataExhibit: React.FC<DataExhibitProps> = ({
               event.stopPropagation();
               onLobbyWarp();
             }}
-            className="mt-4 w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold cursor-pointer"
+            className="relative z-20 mt-4 w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold cursor-pointer pointer-events-auto"
           >
             로비로 워프하기
           </button>

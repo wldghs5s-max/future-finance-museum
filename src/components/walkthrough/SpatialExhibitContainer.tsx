@@ -17,6 +17,7 @@ interface SpatialExhibitContainerProps {
   inspectLabel?: string;
   hideInspectButton?: boolean;
   bare?: boolean;
+  interactive?: boolean;
   motionKind?: ExhibitMotionKind;
   children: React.ReactNode;
   className?: string;
@@ -38,6 +39,7 @@ export const SpatialExhibitContainer: React.FC<
   inspectLabel = "자세히 보기",
   hideInspectButton = false,
   bare = false,
+  interactive = false,
   motionKind = "hall",
   children,
   className = "",
@@ -54,6 +56,8 @@ export const SpatialExhibitContainer: React.FC<
   const blocked = isBlockedByClosedGate(z, cameraZ);
   const canInspect =
     Boolean(onInspect) && inspectable && !blocked && opacity >= 0.2;
+  const canPoint =
+    !blocked && opacity >= 0.2 && (canInspect || interactive);
   const isFocusRange = canInspect && relZ >= -820 && relZ <= -160;
 
   const openInspect = (e: React.MouseEvent) => {
@@ -75,7 +79,7 @@ export const SpatialExhibitContainer: React.FC<
       style={{
         width: typeof width === "number" ? `${width}px` : width,
         transform: `translate3d(${x + driftX}px, ${y + driftY}px, ${z}px) rotateY(${rotateY}deg) rotateX(${rotateX}deg) scale(${scale})`,
-        pointerEvents: canInspect ? "auto" : "none",
+        pointerEvents: canPoint ? "auto" : "none",
         zIndex: relZ < -80 ? 3 : 1,
       }}
     >

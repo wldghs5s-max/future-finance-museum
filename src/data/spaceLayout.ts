@@ -118,7 +118,10 @@ export const FIRST_AFTER_GATE: { gateId: GateId; exhibitId: string }[] = [
   { gateId: "hall06", exhibitId: "exhibit_6a" },
 ];
 
-export const MAX_WORLD_Z = 30600;
+/** 마지막 6-D가 화면 안에 남은 채 멈추게 해 워프 버튼이 끝까지 보이게 한다. */
+export const MAX_WORLD_Z = Math.round(
+  -EXHIBIT_POSES.exhibit_6d.z + MOTION.readNear,
+);
 
 export const ZONE_CAMERA_Z_MAP: Record<SpatialZoneId, number> = {
   lobby: readCameraZ("exhibit_lobby_monument"),
@@ -228,10 +231,10 @@ export const FLOORS = [
 
 /** 회랑 전용. 홀 벽면 전시(x≈±460, 폭 480, 회전 ±22)와 분리한다. */
 export const CORRIDOR_LAYOUT = {
-  wallX: 600,
-  alcoveX: 720,
-  alcoveHalfZ: 300,
-  wallLength: 1200,
+  wallX: 500,
+  alcoveX: 620,
+  alcoveHalfZ: 220,
+  wallLength: 640,
   panelX: 236,
   panelWidth: 440,
   panelRotateY: 6,
