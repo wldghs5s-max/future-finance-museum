@@ -8,7 +8,7 @@ import { Hall03Exhibits } from "./Hall03Exhibits";
 import { Hall04Exhibits } from "./Hall04Exhibits";
 import { Hall05Exhibits } from "./Hall05Exhibits";
 import { Hall06Exhibits } from "./Hall06Exhibits";
-import { Mouse, ArrowDown, Eye } from "lucide-react";
+import { Mouse, ArrowUp, Eye } from "lucide-react";
 
 interface MuseumViewportProps {
   cameraZ: number;
@@ -41,6 +41,7 @@ export const MuseumViewport: React.FC<MuseumViewportProps> = ({
         }}
       >
         <div
+          data-testid="hologram-look"
           className="w-full h-full preserve-3d pointer-events-none"
           style={{
             transform: `rotateY(${lookRotateY}deg) rotateX(${lookRotateX}deg)`,
@@ -48,6 +49,8 @@ export const MuseumViewport: React.FC<MuseumViewportProps> = ({
           }}
         >
           <div
+            data-testid="hologram-hall"
+            data-camera-z={Math.round(cameraZ)}
             className="w-full h-full preserve-3d pointer-events-none"
             style={{
               transform: `translate3d(0px, 0px, ${cameraZ}px)`,
@@ -79,8 +82,8 @@ export const MuseumViewport: React.FC<MuseumViewportProps> = ({
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 pointer-events-none animate-fade-in transition-opacity duration-700 flex flex-col sm:flex-row items-center gap-2">
           <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#071126]/90 border border-cyan-500/40 text-xs font-mono text-cyan-300 shadow-xl backdrop-blur-md">
             <Mouse className="w-4 h-4 text-cyan-400 animate-bounce" />
-            <span>마우스 휠을 아래로 굴려 전진 / 위로 굴려 후진</span>
-            <ArrowDown className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+            <span>마우스 휠을 위로 굴려 전진 / 아래로 굴려 후진</span>
+            <ArrowUp className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
           </div>
 
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#071126]/75 border border-slate-700/60 text-[11px] font-mono text-slate-300 backdrop-blur-md">

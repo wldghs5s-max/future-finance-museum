@@ -90,13 +90,13 @@ export function useMuseumLocomotion(
 
   // 마우스 이동, 휠, 키보드 이벤트 리스너
   useEffect(() => {
-    // 1. 마우스 휠 리스너 (전진/후진 스크롤)
+    // 1. 마우스 휠 리스너 (위=전진, 아래=후진. 게임/상세 내부 스크롤은 paused에서 통과)
     const handleWheel = (e: WheelEvent) => {
       // 모달/시뮬레이션 모드 활성화 시 보행 스크롤 중지 및 내부 컨텐츠 자연 스크롤 허용
       if (isPaused) return;
 
       e.preventDefault();
-      const delta = e.deltaY * sensitivity;
+      const delta = -e.deltaY * sensitivity;
       targetZRef.current = Math.max(
         0,
         Math.min(targetZRef.current + delta, maxZ),
