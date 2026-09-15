@@ -11,7 +11,7 @@ import {
   type ZoneStep,
 } from "./villageView";
 import { exclusiveRoundPick, removePolicy } from "./model";
-import { VILLAGE_BASE, ZONE_STEPS, zoneSrc } from "./villageAssets";
+import { VILLAGE_BASE, ZONE_ARROW_ANCHOR, ZONE_STEPS, zoneSrc } from "./villageAssets";
 
 function jpegSize(buf: Buffer): [number, number] {
   let i = 2;
@@ -95,6 +95,7 @@ assert.equal(villageChangeNotes([]).length, 0);
 const careNotes = villageChangeNotes(["spend_care"], []);
 assert.ok(careNotes.some((n) => n.zone === "care" && n.better && n.text.includes("확대")));
 assert.equal(villageChangeNotes(["tax_hold"], []).length, 0);
+assert.equal(Object.keys(ZONE_ARROW_ANCHOR).length, 3);
 
 const debtNotes = villageChangeNotes(
   ["tax_up", "spend_care", "care_staff", "care_debt"],

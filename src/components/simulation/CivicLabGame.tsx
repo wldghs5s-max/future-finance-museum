@@ -137,11 +137,15 @@ export const CivicLabGame: React.FC<CivicLabGameProps> = ({
   const currentRound = roundFromStep(step);
   const cityMode =
     step === "result" ? "result" : currentRound ? "round" : "idle";
-  const { indicators, conflicts } = useMemo(() => computeState(picks), [picks]);
+  const shownPicks = currentRound ? picks.slice(0, currentRound) : picks;
+  const { indicators, conflicts } = useMemo(() => {
+    const active = currentRound ? picks.slice(0, currentRound) : picks;
+    return computeState(active);
+  }, [picks, currentRound]);
   const beforePick = useMemo(() => {
     const prior =
       currentRound === undefined
-        ? picks.slice(0, -1)
+        ? picks.slice(0, Math.max(0, picks.length - 1))
         : picks.slice(0, currentRound - 1);
     return prior.length === 0 ? BASELINE : computeState(prior).indicators;
   }, [picks, currentRound]);
@@ -185,7 +189,7 @@ export const CivicLabGame: React.FC<CivicLabGameProps> = ({
           아래 숫자와 마을 모습은 게임 안 가정입니다. 국가 전망치가 아닙니다.
         </p>
         <PickHistory picks={picks} currentRound={round} />
-        <div className="grid sm:grid-cols-3 gap-2">
+        <div className="grid gap-2">
           {options.map((item) => (
             <PolicyCard
               key={item.id}
@@ -224,152 +228,156 @@ export const CivicLabGame: React.FC<CivicLabGameProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[60] bg-[#040814] overflow-y-auto">
-      <div className="min-h-full max-w-5xl mx-auto px-4 py-4 sm:py-6">
-        <div className="flex items-center justify-between mb-3">
-          <button
-            type="button"
-            onClick={() => (idx === 0 ? onClose() : setStep(STEPS[idx - 1]))}
-            className="flex items-center gap-1 text-xs text-slate-400 cursor-pointer"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            {idx === 0 ? "전시로" : "이전"}
-          </button>
-          <span className="text-[11px] font-mono text-cyan-300">
-            {currentRound
-              ? `현재 라운드 ${currentRound} / ${TOTAL_ROUNDS}`
-              : step === "result"
-                ? `현재 라운드 ${TOTAL_ROUNDS} / ${TOTAL_ROUNDS}`
-                : `나라살림게임 · ${idx + 1}/${STEPS.length}`}
-          </span>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-2 rounded-lg text-slate-400 hover:text-white cursor-pointer"
-            aria-label="게임 닫기"
-          >
-            <X className="w-5 h-5" />
-          </button>
+    <div className="fixed inset-0 z-[60] bg-[#040814] flex flex-col overflow-hidden">
+      <div className="shrink-0 max-w-7xl mx-auto w-full px-4 pt-4 flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => (idx === 0 ? onClose() : setStep(STEPS[idx - 1]))}
+          className="flex items-center gap-1 text-xs text-slate-400 cursor-pointer"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          {idx === 0 ? "전시로" : "이전"}
+        </button>
+        <span className="text-[11px] font-mono text-cyan-300">
+          {currentRound
+            ? `현재 라운드 ${currentRound} / ${TOTAL_ROUNDS}`
+            : step === "result"
+              ? `현재 라운드 ${TOTAL_ROUNDS} / ${TOTAL_ROUNDS}`
+              : `나라살림게임 · ${idx + 1}/${STEPS.length}`}
+        </span>
+        <button
+          type="button"
+          onClick={onClose}
+          className="p-2 rounded-lg text-slate-400 hover:text-white cursor-pointer"
+          aria-label="게임 닫기"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      <div className="flex-1 min-h-0 max-w-7xl mx-auto w-full px-4 py-3 flex flex-col md:flex-row gap-3">
+        <div className="shrink-0 md:w-[56%] md:h-full md:overflow-y-auto">
+          <CivicCity
+            indicators={step === "intro" || step === "lesson" ? BASELINE : indicators}
+            before={beforePick}
+            picks={step === "intro" || step === "lesson" ? [] : shownPicks}
+            lastPick={
+              step === "intro" || step === "lesson"
+                ? undefined
+                : shownPicks[shownPicks.length - 1]
+            }
+            mode={cityMode}
+            currentRound={currentRound}
+          />
         </div>
 
-        <CivicCity
-          indicators={step === "intro" || step === "lesson" ? BASELINE : indicators}
-          before={beforePick}
-          picks={step === "intro" || step === "lesson" ? [] : picks}
-          lastPick={
-            step === "intro" || step === "lesson"
-              ? undefined
-              : picks[picks.length - 1]
-          }
-          mode={cityMode}
-          currentRound={currentRound}
-        />
-
-        {step !== "intro" && step !== "lesson" && step !== "result" && (
-          <div className="mt-3 mb-4 grid grid-cols-2 sm:grid-cols-5 gap-2">
-            {(Object.keys(INDICATOR_META) as IndicatorId[]).map((id) => (
-              <MiniBar
-                key={id}
-                id={id}
-                value={indicators[id]}
-                before={ROUND_STEPS.includes(step) ? beforePick[id] : undefined}
-              />
-            ))}
-          </div>
-        )}
-
-        <div className="mt-4">
-          {step === "intro" && (
-            <div className="space-y-3">
-              <h2 className="text-2xl font-black text-white">당신이 살림을 맡았습니다</h2>
-              <p className="text-sm text-slate-300 leading-relaxed">
-                위 도시는 교육용 가상 살림입니다. 여섯 라운드 동안 세금, 투자,
-                운영, 부담을 고릅니다. 앞선 선택이 다음 선택지를 바꿉니다. 한
-                조합이 모든 사람을 만족시키지는 않습니다.
-              </p>
-              <button
-                type="button"
-                onClick={() => setStep("lesson")}
-                className="w-full py-3 rounded-xl bg-cyan-500 text-slate-950 font-bold cursor-pointer"
-              >
-                도시 흐름 보기
-              </button>
+        <div className="flex-1 min-h-0 overflow-y-auto" data-testid="game-choice-sidebar">
+          {step !== "intro" && step !== "lesson" && step !== "result" && (
+            <div className="mb-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {(Object.keys(INDICATOR_META) as IndicatorId[]).map((id) => (
+                <MiniBar
+                  key={id}
+                  id={id}
+                  value={indicators[id]}
+                  before={ROUND_STEPS.includes(step) ? beforePick[id] : undefined}
+                />
+              ))}
             </div>
           )}
 
-          {step === "lesson" && (
-            <div className="space-y-3">
-              <h2 className="text-xl font-black text-white">돈은 이렇게 움직입니다</h2>
-              <ul className="text-sm text-slate-300 space-y-2 leading-relaxed">
-                <li>세금이 곳간으로 들어오면 창과 서비스가 유지됩니다.</li>
-                <li>곳간에서 돌봄과 일자리로 나가면 병원·학교·이동이 살아납니다.</li>
-                <li>지금 덜 걷거나 더 쓰면, 나중에 갚을 짐이 커질 수 있습니다.</li>
-                <li>같은 투자를 반복하기보다, 운영·접근성·다른 분야 배분이 이어집니다.</li>
-              </ul>
-              <button
-                type="button"
-                onClick={() => setStep("goal")}
-                className="w-full py-3 rounded-xl bg-cyan-500 text-slate-950 font-bold cursor-pointer"
-              >
-                내가 지킬 것을 고르기
-              </button>
-            </div>
-          )}
-
-          {step === "goal" && (
-            <div className="space-y-3">
-              <h2 className="text-xl font-black text-white">무엇을 먼저 지킬까요?</h2>
-              <div className="grid sm:grid-cols-2 gap-2">
-                {GOALS.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setGoal(item.id)}
-                    className={`text-left p-3 rounded-xl border cursor-pointer ${
-                      goal === item.id
-                        ? "border-cyan-400 bg-cyan-950/40"
-                        : "border-slate-800 bg-slate-950"
-                    }`}
-                  >
-                    <div className="font-bold text-white">{item.name}</div>
-                    <p className="text-xs text-slate-400 mt-1">{item.ask}</p>
-                  </button>
-                ))}
+          <div>
+            {step === "intro" && (
+              <div className="space-y-3">
+                <h2 className="text-2xl font-black text-white">당신이 살림을 맡았습니다</h2>
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  위 도시는 교육용 가상 살림입니다. 여섯 라운드 동안 세금, 투자,
+                  운영, 부담을 고릅니다. 앞선 선택이 다음 선택지를 바꿉니다. 한
+                  조합이 모든 사람을 만족시키지는 않습니다.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setStep("lesson")}
+                  className="w-full py-3 rounded-xl bg-cyan-500 text-slate-950 font-bold cursor-pointer"
+                >
+                  도시 흐름 보기
+                </button>
               </div>
-              <button
-                type="button"
-                disabled={!goal}
-                onClick={() => setStep("round1")}
-                className="w-full py-3 rounded-xl bg-cyan-500 disabled:bg-slate-800 text-slate-950 font-bold cursor-pointer"
-              >
-                첫 선택으로
-              </button>
-            </div>
-          )}
+            )}
 
-          {step === "round1" && renderRound(1)}
-          {step === "round2" && renderRound(2)}
-          {step === "round3" && renderRound(3)}
-          {step === "round4" && renderRound(4)}
-          {step === "round5" && renderRound(5)}
-          {step === "round6" && renderRound(6)}
+            {step === "lesson" && (
+              <div className="space-y-3">
+                <h2 className="text-xl font-black text-white">돈은 이렇게 움직입니다</h2>
+                <ul className="text-sm text-slate-300 space-y-2 leading-relaxed">
+                  <li>세금이 곳간으로 들어오면 창과 서비스가 유지됩니다.</li>
+                  <li>곳간에서 돌봄과 일자리로 나가면 병원·학교·이동이 살아납니다.</li>
+                  <li>지금 덜 걷거나 더 쓰면, 나중에 갚을 짐이 커질 수 있습니다.</li>
+                  <li>같은 투자를 반복하기보다, 운영·접근성·다른 분야 배분이 이어집니다.</li>
+                </ul>
+                <button
+                  type="button"
+                  onClick={() => setStep("goal")}
+                  className="w-full py-3 rounded-xl bg-cyan-500 text-slate-950 font-bold cursor-pointer"
+                >
+                  내가 지킬 것을 고르기
+                </button>
+              </div>
+            )}
 
-          {step === "result" && goal && (
-            <ResultView
-              goal={goal}
-              picks={picks}
-              onReplay={reset}
-              onBrowseHalls={onBrowseHalls}
-            />
-          )}
-          {step === "result" && !goal && (
-            <ResultView
-              goal="balance"
-              picks={picks}
-              onReplay={reset}
-              onBrowseHalls={onBrowseHalls}
-            />
-          )}
+            {step === "goal" && (
+              <div className="space-y-3">
+                <h2 className="text-xl font-black text-white">무엇을 먼저 지킬까요?</h2>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  {GOALS.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setGoal(item.id)}
+                      className={`text-left p-3 rounded-xl border cursor-pointer ${
+                        goal === item.id
+                          ? "border-cyan-400 bg-cyan-950/40"
+                          : "border-slate-800 bg-slate-950"
+                      }`}
+                    >
+                      <div className="font-bold text-white">{item.name}</div>
+                      <p className="text-xs text-slate-400 mt-1">{item.ask}</p>
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  disabled={!goal}
+                  onClick={() => setStep("round1")}
+                  className="w-full py-3 rounded-xl bg-cyan-500 disabled:bg-slate-800 text-slate-950 font-bold cursor-pointer"
+                >
+                  첫 선택으로
+                </button>
+              </div>
+            )}
+
+            {step === "round1" && renderRound(1)}
+            {step === "round2" && renderRound(2)}
+            {step === "round3" && renderRound(3)}
+            {step === "round4" && renderRound(4)}
+            {step === "round5" && renderRound(5)}
+            {step === "round6" && renderRound(6)}
+
+            {step === "result" && goal && (
+              <ResultView
+                goal={goal}
+                picks={picks}
+                onReplay={reset}
+                onBrowseHalls={onBrowseHalls}
+              />
+            )}
+            {step === "result" && !goal && (
+              <ResultView
+                goal="balance"
+                picks={picks}
+                onReplay={reset}
+                onBrowseHalls={onBrowseHalls}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

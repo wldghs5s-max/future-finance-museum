@@ -21,6 +21,13 @@ export const FACILITY_LABELS: { text: string; x: string; y: string }[] = [
   { text: "공원", x: "80%", y: "56%" },
 ];
 
+/** 시설 이름과 겹치지 않는 구역 화살표 위치. */
+export const ZONE_ARROW_ANCHOR: Record<ZoneId, { left: string; top: string }> = {
+  care: { left: "20%", top: "12%" },
+  work: { left: "51%", top: "10%" },
+  commons: { left: "84%", top: "14%" },
+};
+
 export function zoneSrc(zone: ZoneId, step: ZoneStep): string {
   return `/images/museum/village/${zone}_${step}.jpg`;
 }
