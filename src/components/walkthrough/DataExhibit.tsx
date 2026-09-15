@@ -50,6 +50,7 @@ interface DataExhibitProps {
   onInspect: (id: string) => void;
   accent?: keyof typeof ACCENT;
   metricCount?: number;
+  onLobbyWarp?: () => void;
 }
 
 export const DataExhibit: React.FC<DataExhibitProps> = ({
@@ -58,6 +59,7 @@ export const DataExhibit: React.FC<DataExhibitProps> = ({
   onInspect,
   accent = "sky",
   metricCount = 4,
+  onLobbyWarp,
 }) => {
   const exhibit = requireExhibit(id);
   const pose = requirePose(id);
@@ -115,6 +117,19 @@ export const DataExhibit: React.FC<DataExhibitProps> = ({
           <p className="text-[10px] font-mono text-slate-400">
             수치 차트는 상세에서
           </p>
+        )}
+        {onLobbyWarp && (
+          <button
+            type="button"
+            data-testid="warp-to-lobby"
+            onClick={(event) => {
+              event.stopPropagation();
+              onLobbyWarp();
+            }}
+            className="mt-4 w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold cursor-pointer"
+          >
+            로비로 워프하기
+          </button>
         )}
       </div>
     </SpatialExhibitContainer>

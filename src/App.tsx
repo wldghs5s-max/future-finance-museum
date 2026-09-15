@@ -13,7 +13,7 @@ import { EXHIBIT_DETAILS_MAP } from "./data/walkthroughData";
 import { useMuseumLocomotion } from "./hooks/useMuseumLocomotion";
 import { CivicLabGame } from "./components/simulation/CivicLabGame";
 import { MUSEUM_SPACE_GUIDE } from "./types/exhibit";
-import { MAX_WORLD_Z } from "./data/spaceLayout";
+import { MAX_WORLD_Z, MUSEUM_ENTRANCE_Z } from "./data/spaceLayout";
 
 export function App() {
   const [isIntroActive, setIsIntroActive] = useState(true);
@@ -74,7 +74,7 @@ export function App() {
     if (Number.isFinite(cameraStart) && cameraStart >= 0) {
       jumpTo(cameraStart);
     } else if (query.has("skipIntro")) {
-      jumpTo(80);
+      jumpTo(MUSEUM_ENTRANCE_Z);
     }
     if (exhibit && EXHIBIT_DETAILS_MAP[exhibit]) {
       setSelectedExhibitId(exhibit);
@@ -84,7 +84,16 @@ export function App() {
 
   const handleEnterMuseum = () => {
     setIsIntroActive(false);
-    jumpTo(80);
+    jumpTo(MUSEUM_ENTRANCE_Z);
+  };
+
+  const handleWarpToLobby = () => {
+    setSelectedExhibitId(null);
+    setFocusDirectionId(null);
+    setIsMapOpen(false);
+    setIsGlossaryOpen(false);
+    setIsIntroActive(false);
+    jumpTo(MUSEUM_ENTRANCE_Z);
   };
 
   const handleSelectMapZone = (zoneId: SpatialZoneId) => {
@@ -136,6 +145,7 @@ export function App() {
             lookRotateX={lookRotateX}
             onInspectExhibit={handleInspectExhibit}
             onOpenSimulationModal={() => setIsSimulationModalOpen(true)}
+            onWarpToLobby={handleWarpToLobby}
           />
 
           <CivicLabGame

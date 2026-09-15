@@ -71,6 +71,16 @@ export function useMuseumLocomotion(
       targetZRef.current = clamped;
       cameraZRef.current = clamped;
       setCameraZ(clamped);
+      targetMouseXRef.current = 0;
+      targetMouseYRef.current = 0;
+      mouseXRef.current = 0;
+      mouseYRef.current = 0;
+      setLookState({
+        lookRotateY: 0,
+        lookRotateX: 0,
+        lookTranslateX: 0,
+        lookTranslateY: 0,
+      });
       markWalking();
     },
     [maxZ, markWalking],

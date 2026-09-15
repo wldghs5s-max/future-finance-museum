@@ -16,6 +16,7 @@ interface MuseumViewportProps {
   lookRotateX?: number;
   onInspectExhibit: (exhibitId: string, directionId?: string) => void;
   onOpenSimulationModal: () => void;
+  onWarpToLobby: () => void;
 }
 
 export const MuseumViewport: React.FC<MuseumViewportProps> = ({
@@ -24,6 +25,7 @@ export const MuseumViewport: React.FC<MuseumViewportProps> = ({
   lookRotateX = 0,
   onInspectExhibit,
   onOpenSimulationModal,
+  onWarpToLobby,
 }) => {
   const showWalkHint = cameraZ < 800;
 
@@ -67,6 +69,7 @@ export const MuseumViewport: React.FC<MuseumViewportProps> = ({
               cameraZ={cameraZ}
               onInspect={onInspectExhibit}
               onOpenSimulationModal={onOpenSimulationModal}
+              onWarpToLobby={onWarpToLobby}
             />
           </div>
         </div>
