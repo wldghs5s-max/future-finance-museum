@@ -39,14 +39,14 @@ export const MuseumViewport: React.FC<MuseumViewportProps> = ({
         }}
       >
         <div
-          className="w-full h-full preserve-3d will-change-transform pointer-events-none"
+          className="w-full h-full preserve-3d pointer-events-none"
           style={{
             transform: `rotateY(${lookRotateY}deg) rotateX(${lookRotateX}deg)`,
             transformOrigin: "50% 48%",
           }}
         >
           <div
-            className="w-full h-full preserve-3d will-change-transform pointer-events-none"
+            className="w-full h-full preserve-3d pointer-events-none"
             style={{
               transform: `translate3d(0px, 0px, ${cameraZ}px)`,
             }}

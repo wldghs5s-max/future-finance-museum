@@ -180,6 +180,21 @@ export function isBlockedByClosedGate(exhibitZ: number, cameraZ: number) {
   return GATES.some((gate) => exhibitZ < gate.z && !isGateOpenEnough(gate.z, cameraZ));
 }
 
+/** 바닥·천장·회랑 벽. 전시 마운트보다 조금 넓게 잡아 발밑/전방 건축이 먼저 사라지지 않게 한다. */
+const ARCH_AHEAD = MOTION.unmountAhead - 900;
+const ARCH_BEHIND = MOTION.unmountBehind + 500;
+
+export function isArchitectureMounted(
+  worldZ: number,
+  cameraZ: number,
+  length = 0,
+) {
+  const half = Math.max(length, 0) / 2;
+  const minRel = worldZ - half + cameraZ;
+  const maxRel = worldZ + half + cameraZ;
+  return maxRel >= ARCH_AHEAD && minRel <= ARCH_BEHIND;
+}
+
 export function zoneInfoForCamera(cameraZ: number) {
   const row = ZONE_BREAKS.find((item) => cameraZ < item.until) ?? ZONE_BREAKS[ZONE_BREAKS.length - 1];
   return { id: row.id, nameKo: row.nameKo, nameEn: row.nameEn };

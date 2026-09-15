@@ -3,7 +3,7 @@ import {
   CORRIDOR_LAYOUT,
   CORRIDOR_WALLS,
   FLOORS,
-  MAX_WORLD_Z,
+  isArchitectureMounted,
 } from "../../data/spaceLayout";
 
 const WALL_TONE: Record<string, { bg: string; line: string; bar: string }> = {
@@ -85,9 +85,13 @@ function WallPlane({
   );
 }
 
-export const MuseumArchitecture: React.FC<{ cameraZ?: number }> = () => (
+export const MuseumArchitecture: React.FC<{ cameraZ?: number }> = ({
+  cameraZ = 0,
+}) => (
   <div className="absolute inset-0 pointer-events-none preserve-3d">
-    {FLOORS.map((floor) => (
+    {FLOORS.filter((floor) =>
+      isArchitectureMounted(floor.z, cameraZ, floor.height),
+    ).map((floor) => (
       <div
         key={floor.z}
         className="absolute left-1/2 top-1/2 -translate-x-1/2 preserve-3d"
@@ -104,18 +108,25 @@ export const MuseumArchitecture: React.FC<{ cameraZ?: number }> = () => (
       />
     ))}
 
-    <div
-      className="absolute left-1/2 top-1/2 -translate-x-1/2 preserve-3d"
-      style={{
-        width: "1080px",
-        height: `${MAX_WORLD_Z + 800}px`,
-        transform: `translate3d(0px, -280px, ${-MAX_WORLD_Z / 2}px) rotateX(-90deg)`,
-        background:
-          "linear-gradient(to right, transparent 0%, rgba(125, 211, 252, 0.22) 15%, transparent 22%, transparent 78%, rgba(125, 211, 252, 0.22) 85%, transparent 100%)",
-      }}
-    />
+    {FLOORS.filter((floor) =>
+      isArchitectureMounted(floor.z, cameraZ, floor.height),
+    ).map((floor) => (
+      <div
+        key={`ceil-${floor.z}`}
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 preserve-3d"
+        style={{
+          width: "1080px",
+          height: `${floor.height}px`,
+          transform: `translate3d(0px, -280px, ${floor.z}px) rotateX(-90deg)`,
+          background:
+            "linear-gradient(to right, transparent 0%, rgba(125, 211, 252, 0.22) 15%, transparent 22%, transparent 78%, rgba(125, 211, 252, 0.22) 85%, transparent 100%)",
+        }}
+      />
+    ))}
 
-    {CORRIDOR_WALLS.map((wall) => {
+    {CORRIDOR_WALLS.filter((wall) =>
+      isArchitectureMounted(wall.z, cameraZ, CORRIDOR_LAYOUT.wallLength),
+    ).map((wall) => {
       const tone = WALL_TONE[wall.tone];
       const segs = wallSegments(wall.z, wall.exhibitZ);
       const alcoveSide = wall.side === "left" ? -1 : 1;

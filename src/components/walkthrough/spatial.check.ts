@@ -4,10 +4,13 @@ import {
   CORRIDOR_LAYOUT,
   EXHIBIT_POSES,
   FIRST_AFTER_GATE,
+  FLOORS,
   GATES,
   MAX_WORLD_Z,
   ZONE_CAMERA_Z_MAP,
   doorOpenAmount,
+  gateOpacity,
+  isArchitectureMounted,
   isBlockedByClosedGate,
   isGateOpenEnough,
   panelWorldXRange,
@@ -152,5 +155,36 @@ for (const id of CORRIDOR_EXHIBIT_IDS) {
   assert.ok(afterExit.min > -CORRIDOR_LAYOUT.wallX + 24);
   assert.ok(afterExit.max < CORRIDOR_LAYOUT.wallX - 24);
 }
+
+assert.ok(
+  FLOORS.every((floor) => floor.height < 8000),
+  "floor/ceiling slabs must stay below GPU texture limits",
+);
+
+const hall01Cam = readCameraZ("exhibit_1d");
+const hall02Cam = readCameraZ("exhibit_2d");
+const hall03Cam = readCameraZ("exhibit_3d");
+const floorByZ = (z: number) => FLOORS.find((floor) => floor.z === z);
+
+const hall01Floor = floorByZ(-4600);
+const hall02Floor = floorByZ(-9500);
+const hall03Floor = floorByZ(-14400);
+const lobbyFloor = floorByZ(-1600);
+const hall05Floor = floorByZ(-24200);
+if (!hall01Floor || !hall02Floor || !hall03Floor || !lobbyFloor || !hall05Floor) {
+  throw new Error("missing hall floor slabs");
+}
+
+assert.equal(isArchitectureMounted(hall01Floor.z, hall01Cam, hall01Floor.height), true);
+assert.equal(isArchitectureMounted(hall05Floor.z, hall01Cam, hall05Floor.height), false);
+assert.equal(isArchitectureMounted(hall02Floor.z, hall02Cam, hall02Floor.height), true);
+assert.equal(isArchitectureMounted(lobbyFloor.z, hall02Cam, lobbyFloor.height), false);
+assert.equal(isArchitectureMounted(hall03Floor.z, hall03Cam, hall03Floor.height), true);
+assert.equal(isArchitectureMounted(lobbyFloor.z, hall03Cam, lobbyFloor.height), false);
+
+const hall03Gate = GATES.find((gate) => gate.id === "hall03");
+assert.ok(hall03Gate);
+assert.ok(gateOpacity(GATES[0].z + hall03Cam) <= 0);
+assert.ok(gateOpacity(hall03Gate.z + hall03Cam) > 0.5);
 
 console.log("spatial exhibit motion checks passed");

@@ -71,6 +71,8 @@ export const MuseumPortals: React.FC<MuseumPortalsProps> = ({ cameraZ }) => (
   <>
     {GATES.map((gate) => {
       const dist = gate.z + cameraZ;
+      const opacity = gateOpacity(dist);
+      if (opacity <= 0) return null;
       const theme = GATE_THEME[gate.id];
       const open = doorOpenAmount(dist);
       const near = clamp01((dist + 200) / 320);
@@ -84,7 +86,7 @@ export const MuseumPortals: React.FC<MuseumPortalsProps> = ({ cameraZ }) => (
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 preserve-3d pointer-events-none"
           style={{
             transform: `translate3d(0px, 0px, ${gate.z}px)`,
-            opacity: gateOpacity(dist),
+            opacity,
           }}
         >
           <div className="relative w-[920px] h-[540px] preserve-3d">

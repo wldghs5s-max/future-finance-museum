@@ -66,6 +66,7 @@ export const SpatialExhibitContainer: React.FC<
       aria-label={title || exhibitCode || "전시물"}
       data-exhibit-code={exhibitCode}
       data-motion-kind={motionKind}
+      data-motion-opacity={opacity.toFixed(3)}
       data-world-x={Math.round(x + driftX)}
       onClick={openInspect}
       className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 preserve-3d ${
@@ -74,12 +75,11 @@ export const SpatialExhibitContainer: React.FC<
       style={{
         width: typeof width === "number" ? `${width}px` : width,
         transform: `translate3d(${x + driftX}px, ${y + driftY}px, ${z}px) rotateY(${rotateY}deg) rotateX(${rotateX}deg) scale(${scale})`,
-        opacity,
         pointerEvents: canInspect ? "auto" : "none",
         zIndex: relZ < -80 ? 3 : 1,
       }}
     >
-      <div className="relative group">
+      <div className="relative group" style={{ opacity }}>
         <div
           className={
             canInspect && !bare
