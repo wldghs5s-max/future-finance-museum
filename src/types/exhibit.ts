@@ -33,6 +33,7 @@ export interface FeaturedMetric {
   highlight?: boolean;
   kind: ContentKind;
   citationId?: string;
+  href?: string;
 }
 
 export interface PolicyTradeoff {
