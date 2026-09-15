@@ -11,6 +11,8 @@ import { getExhibit } from "../../data/walkthroughData";
 import { getGlossary } from "../../data/glossaryData";
 import { TermPopover } from "../common/TermPopover";
 import { SourceCitation } from "../../types/exhibit";
+import { HoloDetailFrame } from "./HoloDetailFrame";
+import { HOLO_CTA, holoAccentFor } from "../../data/exhibitAccent";
 
 function isVisitorNote(note?: string) {
   if (!note) return false;
@@ -108,14 +110,13 @@ export const ChoicesDetailDrawer: React.FC<ChoicesDetailDrawerProps> = ({
     return () => window.removeEventListener("keydown", onKey, true);
   }, [onClose, termId]);
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-end bg-slate-950/60 backdrop-blur-sm animate-fade-in">
-      <div
-        className="absolute inset-0"
-        onClick={() => (termId ? setTermId(null) : onClose())}
-      />
+  const accent = holoAccentFor(data.id);
 
-      <div className="relative z-10 w-full max-w-xl h-full bg-[#070c1a] border-l border-cyan-500/40 px-4 py-4 sm:px-6 sm:py-5 flex flex-col overflow-hidden shadow-2xl shadow-cyan-950/80">
+  return (
+    <HoloDetailFrame
+      accent={accent}
+      onBackdrop={() => (termId ? setTermId(null) : onClose())}
+    >
         {termId && (
           <TermPopover
             termId={termId}
@@ -146,7 +147,7 @@ export const ChoicesDetailDrawer: React.FC<ChoicesDetailDrawerProps> = ({
           </button>
         </div>
 
-        <div ref={scrollRef} className="flex-1 overflow-y-auto pr-1 space-y-2">
+        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto pr-1 space-y-2">
           {items.map((item) => {
             const detail = directionDetail(item.id);
             const expanded = openId === item.id;
@@ -169,8 +170,8 @@ export const ChoicesDetailDrawer: React.FC<ChoicesDetailDrawerProps> = ({
                 data-direction-panel={item.id}
                 className={`rounded-xl border ${
                   expanded
-                    ? "border-cyan-500/40 bg-slate-900/70"
-                    : "border-slate-800 bg-slate-950/50"
+                    ? "border-white/25 bg-slate-900/55"
+                    : "border-white/10 bg-slate-950/40"
                 }`}
               >
                 <button
@@ -257,16 +258,15 @@ export const ChoicesDetailDrawer: React.FC<ChoicesDetailDrawerProps> = ({
           </div>
         </div>
 
-        <div className="pt-3 mt-2 border-t border-slate-800 flex justify-end shrink-0">
+        <div className="pt-3 mt-2 border-t border-white/10 flex justify-end shrink-0">
           <button
             onClick={onClose}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs uppercase tracking-wider transition cursor-pointer"
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono font-bold text-xs uppercase tracking-wider transition cursor-pointer ${HOLO_CTA[accent]}`}
           >
             <span>닫기</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
-      </div>
-    </div>
+    </HoloDetailFrame>
   );
 };

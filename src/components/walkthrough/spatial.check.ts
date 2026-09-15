@@ -7,6 +7,7 @@ import {
   FIRST_AFTER_GATE,
   FLOORS,
   GATES,
+  GATE_SCENE_EXHIBIT,
   GATE_VIEW,
   MAX_WORLD_Z,
   MUSEUM_ENTRANCE_Z,
@@ -25,8 +26,8 @@ import { exhibitMotion, isExhibitMounted } from "./spatialMotion";
 assert.deepEqual(exhibitMotion(-800, 0, 0).readable, true);
 assert.ok(exhibitMotion(-800, 0, 0).exitT < 0.02);
 assert.ok(exhibitMotion(-800, 0, 0).opacity > 0.85);
-assert.ok(exhibitMotion(-1800, 0, 0).opacity > 0.2);
-assert.ok(exhibitMotion(-1800, 0, 0).inspectable);
+assert.ok(exhibitMotion(-1550, 0, 0).opacity > 0.2);
+assert.ok(exhibitMotion(-1550, 0, 0).inspectable);
 
 const leaving = exhibitMotion(-80, 0, 0);
 assert.ok(leaving.exitT > 0.35);
@@ -156,7 +157,23 @@ for (const id of CORRIDOR_EXHIBIT_IDS) {
   assert.ok(doorOpenAmount(dist) < 0.95, `map landing already hides ${nextGateId} doors`);
 }
 
-assert.equal(MUSEUM_ENTRANCE_Z, 80);
+const lastBeforeGate = [
+  ["exhibit_1_choices", "hall02"],
+  ["exhibit_2_choices", "hall03"],
+  ["exhibit_3_choices", "hall04"],
+  ["exhibit_4_choices", "hall05"],
+  ["exhibit_5_choices", "hall06"],
+] as const;
+
+for (const [lastId, nextGateId] of lastBeforeGate) {
+  const last = EXHIBIT_POSES[lastId];
+  const gate = GATES.find((item) => item.id === nextGateId);
+  assert.ok(last && gate, lastId);
+  const gap = last.z - gate.z;
+  assert.ok(gap >= 350 && gap <= 900, `${lastId} gap to ${nextGateId}: ${gap}`);
+}
+assert.equal(GATE_SCENE_EXHIBIT.hall01, "exhibit_lobby_monument");
+assert.equal(GATE_SCENE_EXHIBIT.hall02, "exhibit_corridor_01");
 assert.ok(GATE_VIEW > -900 && GATE_VIEW < 0);
 assert.equal(MAX_WORLD_Z, 29920);
 assert.ok(CORRIDOR_LAYOUT.wallLength <= 720);

@@ -49,6 +49,8 @@ export function App() {
     lookRotateY,
     lookRotateX,
     jumpTo,
+    warpTo,
+    warping,
   } = useMuseumLocomotion({
     maxWorldZ: MAX_WORLD_Z,
     dampingFactor: 0.08,
@@ -93,7 +95,7 @@ export function App() {
     setIsMapOpen(false);
     setIsGlossaryOpen(false);
     setIsIntroActive(false);
-    jumpTo(MUSEUM_ENTRANCE_Z);
+    warpTo(MUSEUM_ENTRANCE_Z);
   };
 
   const handleSelectMapZone = (zoneId: SpatialZoneId) => {
@@ -147,6 +149,14 @@ export function App() {
             onOpenSimulationModal={() => setIsSimulationModalOpen(true)}
             onWarpToLobby={handleWarpToLobby}
           />
+
+          {warping && (
+            <div
+              className="holo-warp-veil"
+              data-testid="lobby-warp-veil"
+              aria-hidden
+            />
+          )}
 
           <CivicLabGame
             isOpen={isSimulationModalOpen}

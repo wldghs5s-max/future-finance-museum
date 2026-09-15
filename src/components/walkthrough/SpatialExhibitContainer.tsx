@@ -84,10 +84,21 @@ export const SpatialExhibitContainer: React.FC<
       }}
     >
       <div className="relative group" style={{ opacity }}>
+        {!bare && (
+          <>
+            <div
+              className={`holo-lamp pointer-events-none ${
+                isFocusRange ? "holo-lamp-focus" : ""
+              }`}
+              aria-hidden
+            />
+            <div className="holo-beam pointer-events-none" aria-hidden />
+          </>
+        )}
         <div
           className={
             canInspect && !bare
-              ? "ring-1 ring-cyan-400/25 group-hover:shadow-[0_0_35px_rgba(0,240,255,0.28)]"
+              ? "group-hover:brightness-110 transition-[filter] duration-300"
               : ""
           }
         >
@@ -105,10 +116,6 @@ export const SpatialExhibitContainer: React.FC<
             <Search className="w-3.5 h-3.5" />
             <span>{inspectLabel}</span>
           </button>
-        )}
-
-        {isFocusRange && !bare && (
-          <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-36 h-1 bg-cyan-400/90 rounded-full blur-[2px] shadow-[0_0_25px_#00f0ff] pointer-events-none" />
         )}
       </div>
     </div>

@@ -22,6 +22,14 @@ export interface LocomotionState {
   lookTranslateX: number; // 마우스 미세 수평 이동 (px)
   lookTranslateY: number; // 마우스 미세 수직 이동 (px)
   jumpTo: (z: number) => void;
+  warpTo: (z: number, durationMs?: number) => void;
+  warping: boolean;
+}
+
+export const LOBBY_WARP_MS = 720;
+
+function easeInCubic(t: number) {
+  return t * t * t;
 }
 
 // 지도 12개 구역 + 입장 오프닝. 월드 깊이는 spaceLayout.MAX_WORLD_Z
@@ -37,6 +45,14 @@ export function useMuseumLocomotion(
   const [cameraZ, setCameraZ] = useState(0);
   const targetZRef = useRef(0);
   const cameraZRef = useRef(0);
+  const warpRef = useRef<{
+    from: number;
+    surge: number;
+    land: number;
+    start: number;
+    duration: number;
+  } | null>(null);
+  const [warping, setWarping] = useState(false);
   const [isWalking, setIsWalking] = useState(false);
   const walkTimeoutRef = useRef<number | null>(null);
 
@@ -64,26 +80,60 @@ export function useMuseumLocomotion(
     }, 200);
   }, []);
 
+  const resetLook = useCallback(() => {
+    targetMouseXRef.current = 0;
+    targetMouseYRef.current = 0;
+    mouseXRef.current = 0;
+    mouseYRef.current = 0;
+    setLookState({
+      lookRotateY: 0,
+      lookRotateX: 0,
+      lookTranslateX: 0,
+      lookTranslateY: 0,
+    });
+  }, []);
+
   // 순간 이동 (도면 점프 등)
   const jumpTo = useCallback(
     (z: number) => {
       const clamped = Math.max(0, Math.min(z, maxZ));
+      warpRef.current = null;
+      setWarping(false);
       targetZRef.current = clamped;
       cameraZRef.current = clamped;
       setCameraZ(clamped);
-      targetMouseXRef.current = 0;
-      targetMouseYRef.current = 0;
-      mouseXRef.current = 0;
-      mouseYRef.current = 0;
-      setLookState({
-        lookRotateY: 0,
-        lookRotateX: 0,
-        lookTranslateX: 0,
-        lookTranslateY: 0,
-      });
+      resetLook();
       markWalking();
     },
-    [maxZ, markWalking],
+    [maxZ, markWalking, resetLook],
+  );
+
+  // 로비 워프: 후진하지 않고 앞으로 가속한 뒤 정문으로 이어진다
+  const warpTo = useCallback(
+    (z: number, durationMs = LOBBY_WARP_MS) => {
+      const land = Math.max(0, Math.min(z, maxZ));
+      const from = cameraZRef.current;
+      resetLook();
+      if (Math.abs(from - land) < 2) {
+        warpRef.current = null;
+        setWarping(false);
+        cameraZRef.current = land;
+        targetZRef.current = land;
+        setCameraZ(land);
+        return;
+      }
+      const surge = from + Math.max(2600, maxZ - from + 1400);
+      warpRef.current = {
+        from,
+        surge,
+        land,
+        start: performance.now(),
+        duration: Math.max(160, durationMs),
+      };
+      setWarping(true);
+      markWalking();
+    },
+    [maxZ, markWalking, resetLook],
   );
 
   const isPaused = options?.paused ?? false;
@@ -94,6 +144,10 @@ export function useMuseumLocomotion(
     const handleWheel = (e: WheelEvent) => {
       // 모달/시뮬레이션 모드 활성화 시 보행 스크롤 중지 및 내부 컨텐츠 자연 스크롤 허용
       if (isPaused) return;
+      if (warpRef.current) {
+        e.preventDefault();
+        return;
+      }
 
       e.preventDefault();
       const delta = -e.deltaY * sensitivity;
@@ -106,7 +160,7 @@ export function useMuseumLocomotion(
 
     // 2. 마우스 커서 위치 리스너 (마우스 커서 방향을 따라 직관적으로 고개 돌리기)
     const handleMouseMove = (e: MouseEvent) => {
-      if (isPaused) return;
+      if (isPaused || warpRef.current) return;
       const normX = e.clientX / window.innerWidth - 0.5; // -0.5 ~ +0.5
       const normY = e.clientY / window.innerHeight - 0.5; // -0.5 ~ +0.5
       targetMouseXRef.current = normX;
@@ -115,7 +169,7 @@ export function useMuseumLocomotion(
 
     // 3. 키보드 방향키 리스너
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isPaused) return;
+      if (isPaused || warpRef.current) return;
       let delta = 0;
       if (e.key === "ArrowDown" || e.key === " " || e.key === "PageDown") {
         delta = e.key === "PageDown" ? 600 : 150;
@@ -136,12 +190,12 @@ export function useMuseumLocomotion(
     // 4. 모바일 터치 스와이프 리스너
     let touchStartY = 0;
     const handleTouchStart = (e: TouchEvent) => {
-      if (isPaused) return;
+      if (isPaused || warpRef.current) return;
       touchStartY = e.touches[0].clientY;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (isPaused) return;
+      if (isPaused || warpRef.current) return;
       const currentY = e.touches[0].clientY;
       const deltaY = (touchStartY - currentY) * 1.5;
       touchStartY = currentY;
@@ -175,11 +229,33 @@ export function useMuseumLocomotion(
     let animId: number;
 
     const tick = () => {
-      // 1. Z축 전진/후진 보행 LERP
-      const diffZ = targetZRef.current - cameraZRef.current;
-      if (Math.abs(diffZ) > 0.05) {
-        cameraZRef.current += diffZ * damping;
-        setCameraZ(cameraZRef.current);
+      const warp = warpRef.current;
+      if (warp) {
+        const t = Math.min(1, (performance.now() - warp.start) / warp.duration);
+        const wrapAt = 0.82;
+        let next: number;
+        if (t < wrapAt) {
+          next = warp.from + (warp.surge - warp.from) * easeInCubic(t / wrapAt);
+          targetZRef.current = warp.surge;
+        } else {
+          next = warp.land;
+          targetZRef.current = warp.land;
+        }
+        cameraZRef.current = next;
+        setCameraZ(next);
+        if (t >= 1) {
+          cameraZRef.current = warp.land;
+          targetZRef.current = warp.land;
+          setCameraZ(warp.land);
+          warpRef.current = null;
+          setWarping(false);
+        }
+      } else {
+        const diffZ = targetZRef.current - cameraZRef.current;
+        if (Math.abs(diffZ) > 0.05) {
+          cameraZRef.current += diffZ * damping;
+          setCameraZ(cameraZRef.current);
+        }
       }
 
       // 2. 마우스 시선 LERP
@@ -210,7 +286,7 @@ export function useMuseumLocomotion(
   }, [damping]);
 
   const zoneInfo = getZoneInfo(cameraZ);
-  const progress = Math.min(cameraZ / maxZ, 1);
+  const progress = Math.min(Math.max(cameraZ, 0) / maxZ, 1);
 
   return {
     cameraZ,
@@ -225,5 +301,7 @@ export function useMuseumLocomotion(
     lookTranslateX: lookState.lookTranslateX,
     lookTranslateY: lookState.lookTranslateY,
     jumpTo,
+    warpTo,
+    warping,
   };
 }

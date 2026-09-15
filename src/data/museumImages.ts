@@ -16,7 +16,7 @@ export const GENERATED_MUSEUM_IMAGES: GeneratedMuseumImage[] = [
     alt: "원형 받침대 위에 여섯 주제 기둥이 선 조형물",
     aspect: "1448 / 1086",
     exhibitIds: ["exhibit_lobby_monument"],
-    placement: "로비 중앙 선택의 자리. Codex 생성본. 이미지에 받침대가 포함되어 별도 CSS 받침대를 겹치지 않음",
+    placement: "인구변화 홀 게이트 문짝. 로비 중앙 카드는 제거하고 문 장면에 통합",
     promptSummary:
       "인구·복지·환경·AI·재정전망·정책 선택을 상징하는 여섯 기둥 조형물. 원형 받침대 포함.",
   },

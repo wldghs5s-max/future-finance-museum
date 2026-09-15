@@ -3,9 +3,9 @@ import {
   GATES,
   GateId,
   clamp01,
-  corridorExhibitForGate,
   doorOpenAmount,
   gateOpacity,
+  sceneExhibitForGate,
 } from "../../data/spaceLayout";
 import { generatedVisualFor } from "../../data/museumImages";
 import { getExhibit } from "../../data/walkthroughData";
@@ -95,7 +95,7 @@ function DoorSceneHalf({
   gateId: GateId;
   side: "left" | "right";
 }) {
-  const exhibitId = corridorExhibitForGate(gateId);
+  const exhibitId = sceneExhibitForGate(gateId);
   if (!exhibitId) return null;
   const exhibit = getExhibit(exhibitId);
   const visual = generatedVisualFor(exhibitId);
@@ -134,7 +134,7 @@ export const MuseumPortals: React.FC<MuseumPortalsProps> = ({ cameraZ }) => (
       const signLift = -18 - 52 * near;
       const signFade =
         dist > -180 ? Math.max(0, 1 - (dist + 180) / 150) : 1;
-      const approachId = corridorExhibitForGate(gate.id);
+      const approachId = sceneExhibitForGate(gate.id);
       const approach = approachId ? getExhibit(approachId) : undefined;
       const hasScene = Boolean(approachId && generatedVisualFor(approachId));
 

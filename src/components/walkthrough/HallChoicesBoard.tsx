@@ -1,6 +1,7 @@
 import React from "react";
 import { SpatialExhibitContainer } from "./SpatialExhibitContainer";
 import { requirePose } from "../../data/spaceLayout";
+import { holoAccentFor } from "../../data/exhibitAccent";
 import {
   hallDirectionItems,
   hallSetByClosingId,
@@ -14,11 +15,11 @@ interface HallChoicesBoardProps {
 }
 
 const TONE: Record<string, string> = {
-  hall01: "border-rose-400/50 bg-[#2a1014]/90",
-  hall02: "border-amber-400/50 bg-[#2a1c0c]/90",
-  hall03: "border-emerald-400/50 bg-[#0c241c]/90",
-  hall04: "border-violet-400/50 bg-[#1e1230]/90",
-  hall05: "border-rose-300/50 bg-[#1c050c]/90",
+  hall01: "holo-panel holo-panel-rose",
+  hall02: "holo-panel holo-panel-amber",
+  hall03: "holo-panel holo-panel-emerald",
+  hall04: "holo-panel holo-panel-violet",
+  hall05: "holo-panel holo-panel-rose",
 };
 
 export const HallChoicesBoard: React.FC<HallChoicesBoardProps> = ({
@@ -29,7 +30,7 @@ export const HallChoicesBoard: React.FC<HallChoicesBoardProps> = ({
   const hall = hallSetByClosingId(id);
   const pose = requirePose(id);
   if (!hall) return null;
-  const tone = TONE[hall.id] ?? "border-cyan-400/50 bg-[#0c2438]/90";
+  const tone = TONE[hall.id] ?? "holo-panel holo-panel-cyan";
   const items = hallDirectionItems(hall);
 
   return (
@@ -42,9 +43,10 @@ export const HallChoicesBoard: React.FC<HallChoicesBoardProps> = ({
       width={pose.width}
       title={hall.closingTitle}
       exhibitCode="대응 방향"
+      className={`holo-accent holo-accent-${holoAccentFor(id)}`}
       onInspect={() => onInspect(id)}
     >
-      <div className={`px-5 py-4 rounded-2xl border-2 shadow-2xl ${tone}`}>
+      <div className={`px-5 py-4 ${tone}`}>
         <h3 className="text-xl font-black text-white leading-snug">
           {hall.closingTitle}
         </h3>

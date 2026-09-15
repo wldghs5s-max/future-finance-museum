@@ -1,4 +1,4 @@
-import { cite } from "../citations";
+import { cite, citeIntroSources } from "../citations";
 import { MUSEUM_SPACE_GUIDE } from "../../types/exhibit";
 import { ex, m } from "./build";
 
@@ -33,7 +33,7 @@ export const lobbyExhibits = {
         cost: "이 사이트 자체는 정부 공식 누리집이 아닙니다.",
       },
     ],
-    sources: cite("closing"),
+    sources: citeIntroSources(),
     relatedTerms: ["재정 지속가능성", "세대 간 형평성"],
     stagingNote: MUSEUM_SPACE_GUIDE.civicNote,
   }),

@@ -250,18 +250,123 @@ export const C: Record<string, SourceCitation> = {
     url: "https://fiscalgame.askperi.kr",
     note: "게임 규칙·용어 설명. 국가 공식 전망과 별개",
   },
+  src_nars: {
+    id: "src_nars",
+    pages: "103",
+    institution: "국회입법조사처",
+    documentName: "공개 연구보고서·정책자료",
+  },
+  src_kdi: {
+    id: "src_kdi",
+    pages: "103",
+    institution: "한국개발연구원(KDI)",
+    documentName: "공개 연구보고서·정책자료",
+  },
+  src_kipf: {
+    id: "src_kipf",
+    pages: "103",
+    institution: "한국조세재정연구원",
+    documentName: "공개 연구보고서",
+  },
+  src_kihasa: {
+    id: "src_kihasa",
+    pages: "103",
+    institution: "한국보건사회연구원",
+    documentName: "공개 연구보고서",
+  },
+  portal_nabo: {
+    id: "portal_nabo",
+    pages: "104",
+    institution: "국회예산정책처",
+    documentName: "장기재정전망, 나보포커스 등 연구보고서",
+    url: "https://www.nabo.go.kr",
+  },
+  portal_moef: {
+    id: "portal_moef",
+    pages: "104",
+    institution: "기획재정부",
+    documentName: "장기재정전망, 국가재정운용계획, 예산안",
+    url: "https://www.moef.go.kr",
+  },
+  portal_kostat: {
+    id: "portal_kostat",
+    pages: "104",
+    institution: "국가데이터처(통계청)",
+    documentName: "장래인구추계, 인구동향조사",
+    url: "https://kostat.go.kr",
+  },
+  portal_kosis: {
+    id: "portal_kosis",
+    pages: "104",
+    institution: "KOSIS 국가통계포털",
+    documentName: "인구·가구·고용 등 원자료 조회",
+    url: "https://kosis.kr",
+  },
+  portal_nafi: {
+    id: "portal_nafi",
+    pages: "104",
+    institution: "국회미래연구원",
+    documentName: "인구위기와 축소사회 대응 시리즈 등 정책연구",
+    url: "https://www.nafi.re.kr",
+  },
+  portal_nps: {
+    id: "portal_nps",
+    pages: "104",
+    institution: "국민연금공단",
+    documentName: "기금운용 실적, 재정계산 결과",
+    url: "https://www.nps.or.kr",
+  },
+  portal_law: {
+    id: "portal_law",
+    pages: "104",
+    institution: "국가법령정보센터",
+    documentName: "국민연금법 등 법령 원문·개정이력",
+    url: "https://www.law.go.kr",
+  },
+  portal_climate: {
+    id: "portal_climate",
+    pages: "104",
+    institution: "기후정보포털(기상청)",
+    documentName: "한국 기후위기 평가보고서 등 기후 전망",
+    url: "https://www.climate.go.kr",
+  },
+  portal_ai: {
+    id: "portal_ai",
+    pages: "104",
+    institution: "국가인공지능전략위원회",
+    documentName: "대한민국 인공지능행동계획",
+    url: "https://www.aikorea.go.kr",
+  },
+  portal_fiscal_ship: {
+    id: "portal_fiscal_ship",
+    pages: "104",
+    institution: "Brookings·Wilson Center",
+    documentName: "The Fiscal Ship",
+    url: "https://fiscalship.org/about.php",
+    note: "나라살림게임의 원작",
+  },
+  portal_korea_kr: {
+    id: "portal_korea_kr",
+    pages: "104",
+    institution: "대한민국 정책브리핑",
+    documentName: "정부 정책 보도자료 모음",
+    url: "https://www.korea.kr",
+  },
   closing: {
     id: "closing",
-    pages: "93, 101, 103-104",
-    institution: "재정미래관",
-    documentName: "비공식 시민 교육 자료 성격 및 원자료 포털",
+    pages: "103-104",
+    institution: "국회미래연구원 · 국회예산정책처 · 기획재정부 등",
+    documentName: "공개 연구보고서·보도자료·통계 및 원자료 포털",
+    url: "https://www.openfiscaldata.go.kr/op/ko/index",
+    note: "각 문단·표의 수치는 해당 원문 발표 시점 기준이며 이후 달라질 수 있습니다.",
   },
   open_fiscal: {
     id: "open_fiscal",
     pages: "93, 104",
     institution: "기획재정부",
-    documentName: "열린재정·모두의 재정",
+    documentName: "열린재정 재정정보공개시스템",
     url: "https://www.openfiscaldata.go.kr/op/ko/index",
+    note: "예산·결산·국가채무 등 전 재정과정 통계",
   },
   my_budget: {
     id: "my_budget",
@@ -274,4 +379,29 @@ export const C: Record<string, SourceCitation> = {
 
 export function cite(...ids: string[]): SourceCitation[] {
   return ids.map((id) => C[id]).filter(Boolean);
+}
+
+/** PDF 103쪽 인용 기관 + 104쪽 원자료 포털 */
+export const INTRO_SOURCE_IDS = [
+  "portal_nafi",
+  "portal_nabo",
+  "src_nars",
+  "portal_moef",
+  "open_fiscal",
+  "src_kdi",
+  "src_kipf",
+  "src_kihasa",
+  "portal_kostat",
+  "portal_kosis",
+  "peri_game",
+  "portal_nps",
+  "portal_law",
+  "portal_climate",
+  "portal_ai",
+  "portal_fiscal_ship",
+  "portal_korea_kr",
+] as const;
+
+export function citeIntroSources(): SourceCitation[] {
+  return cite(...INTRO_SOURCE_IDS);
 }

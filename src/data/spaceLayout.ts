@@ -1,8 +1,8 @@
 import { SpatialZoneId } from "../types/spatial";
 
 export const MOTION = {
-  appearStart: -2100,
-  appearFull: -1400,
+  appearStart: -1750,
+  appearFull: -1150,
   readFar: -1100,
   readBest: -720,
   readNear: -280,
@@ -53,58 +53,58 @@ export const EXHIBIT_POSES: Record<string, ExhibitPose> = {
   exhibit_lobby_monument: { x: 0, y: 10, z: -1950, rotateY: 0, width: 560 },
   exhibit_lobby_directory: { x: 460, y: -10, z: -1450, rotateY: -18, width: 460 },
 
-  exhibit_1d: { x: -460, y: 0, z: -3700, rotateY: 22, width: 480 },
-  exhibit_1f: { x: 460, y: 0, z: -3900, rotateY: -22, width: 480 },
-  exhibit_1a: { x: -460, y: -20, z: -4300, rotateY: 22, width: 500 },
-  exhibit_1b: { x: -460, y: 0, z: -4800, rotateY: 22, width: 480 },
-  exhibit_1g: { x: 460, y: 0, z: -4900, rotateY: -22, width: 480 },
-  exhibit_1e: { x: -460, y: 10, z: -5300, rotateY: 22, width: 460 },
-  exhibit_1c: { x: 0, y: 0, z: -5600, rotateY: 0, width: 500 },
-  exhibit_1h: { x: 460, y: -10, z: -6000, rotateY: -18, width: 500 },
-  exhibit_1_choices: { x: 280, y: 0, z: -6240, rotateY: -12, width: 500 },
-  exhibit_corridor_01: { x: -236, y: 10, z: -6500, rotateY: 6, width: 440 },
+  exhibit_1d: { x: -460, y: 0, z: -3720, rotateY: 22, width: 480 },
+  exhibit_1f: { x: 460, y: 0, z: -4140, rotateY: -22, width: 480 },
+  exhibit_1a: { x: -460, y: -20, z: -4620, rotateY: 22, width: 500 },
+  exhibit_1g: { x: 460, y: 0, z: -5040, rotateY: -22, width: 480 },
+  exhibit_1b: { x: -460, y: 0, z: -5520, rotateY: 22, width: 480 },
+  exhibit_1h: { x: 460, y: -10, z: -5940, rotateY: -18, width: 500 },
+  exhibit_1e: { x: -460, y: 10, z: -6420, rotateY: 22, width: 460 },
+  exhibit_1c: { x: 0, y: 0, z: -6620, rotateY: 0, width: 500 },
+  exhibit_1_choices: { x: 280, y: 0, z: -7140, rotateY: -12, width: 500 },
+  exhibit_corridor_01: { x: -236, y: 10, z: -7320, rotateY: 6, width: 440 },
 
-  exhibit_2d: { x: -460, y: 0, z: -8500, rotateY: 22, width: 480 },
-  exhibit_2f: { x: 460, y: 0, z: -8700, rotateY: -22, width: 480 },
-  exhibit_2a: { x: -460, y: -20, z: -9200, rotateY: 22, width: 500 },
-  exhibit_2e: { x: 460, y: 0, z: -9500, rotateY: -22, width: 480 },
-  exhibit_2b: { x: -460, y: 0, z: -9800, rotateY: 22, width: 480 },
-  exhibit_2c: { x: 0, y: 0, z: -10400, rotateY: 0, width: 520 },
-  exhibit_2_choices: { x: -280, y: 0, z: -10880, rotateY: 12, width: 500 },
-  exhibit_corridor_02: { x: 236, y: 10, z: -11400, rotateY: -6, width: 440 },
+  exhibit_2d: { x: -460, y: 0, z: -8520, rotateY: 22, width: 480 },
+  exhibit_2f: { x: 460, y: 0, z: -8940, rotateY: -22, width: 480 },
+  exhibit_2a: { x: -460, y: -20, z: -9420, rotateY: 22, width: 500 },
+  exhibit_2e: { x: 460, y: 0, z: -9840, rotateY: -22, width: 480 },
+  exhibit_2b: { x: -460, y: 0, z: -10320, rotateY: 22, width: 480 },
+  exhibit_2c: { x: 0, y: 0, z: -10880, rotateY: 0, width: 520 },
+  exhibit_2_choices: { x: -280, y: 0, z: -11680, rotateY: 12, width: 500 },
+  exhibit_corridor_02: { x: 236, y: 10, z: -12080, rotateY: -6, width: 440 },
 
-  exhibit_3d: { x: -460, y: 0, z: -13400, rotateY: 22, width: 480 },
-  exhibit_3e: { x: 460, y: 0, z: -13600, rotateY: -22, width: 480 },
-  exhibit_3a: { x: -460, y: -20, z: -14100, rotateY: 22, width: 500 },
-  exhibit_3f: { x: 460, y: 0, z: -14400, rotateY: -22, width: 480 },
-  exhibit_3b: { x: -460, y: 0, z: -14600, rotateY: 22, width: 480 },
-  exhibit_3c: { x: 0, y: 0, z: -15300, rotateY: 0, width: 520 },
-  exhibit_3h: { x: 460, y: -10, z: -15800, rotateY: -18, width: 500 },
-  exhibit_3_choices: { x: 280, y: 0, z: -16040, rotateY: -12, width: 500 },
-  exhibit_corridor_03: { x: -236, y: 10, z: -16300, rotateY: 6, width: 440 },
+  exhibit_3d: { x: -460, y: 0, z: -13420, rotateY: 22, width: 480 },
+  exhibit_3e: { x: 460, y: 0, z: -13840, rotateY: -22, width: 480 },
+  exhibit_3a: { x: -460, y: -20, z: -14320, rotateY: 22, width: 500 },
+  exhibit_3f: { x: 460, y: 0, z: -14740, rotateY: -22, width: 480 },
+  exhibit_3b: { x: -460, y: 0, z: -15220, rotateY: 22, width: 480 },
+  exhibit_3h: { x: 460, y: -10, z: -15640, rotateY: -18, width: 500 },
+  exhibit_3c: { x: 0, y: 0, z: -16120, rotateY: 0, width: 520 },
+  exhibit_3_choices: { x: 280, y: 0, z: -16680, rotateY: -12, width: 500 },
+  exhibit_corridor_03: { x: -236, y: 10, z: -17000, rotateY: 6, width: 440 },
 
-  exhibit_4d: { x: -460, y: 0, z: -18300, rotateY: 22, width: 480 },
-  exhibit_4e: { x: 460, y: 0, z: -18500, rotateY: -22, width: 480 },
-  exhibit_4a: { x: -460, y: -20, z: -19000, rotateY: 22, width: 500 },
-  exhibit_4f: { x: 460, y: 0, z: -19300, rotateY: -22, width: 480 },
-  exhibit_4b: { x: -460, y: 0, z: -19500, rotateY: 22, width: 480 },
-  exhibit_4c: { x: 0, y: 0, z: -20200, rotateY: 0, width: 520 },
-  exhibit_4h: { x: 460, y: -10, z: -20700, rotateY: -18, width: 500 },
-  exhibit_4_choices: { x: -280, y: 0, z: -20940, rotateY: 12, width: 500 },
-  exhibit_corridor_04: { x: 236, y: 10, z: -21200, rotateY: -6, width: 440 },
+  exhibit_4d: { x: -460, y: 0, z: -18320, rotateY: 22, width: 480 },
+  exhibit_4e: { x: 460, y: 0, z: -18740, rotateY: -22, width: 480 },
+  exhibit_4a: { x: -460, y: -20, z: -19220, rotateY: 22, width: 500 },
+  exhibit_4f: { x: 460, y: 0, z: -19640, rotateY: -22, width: 480 },
+  exhibit_4b: { x: -460, y: 0, z: -20120, rotateY: 22, width: 480 },
+  exhibit_4h: { x: 460, y: -10, z: -20540, rotateY: -18, width: 500 },
+  exhibit_4c: { x: 0, y: 0, z: -21020, rotateY: 0, width: 520 },
+  exhibit_4_choices: { x: -280, y: 0, z: -21580, rotateY: 12, width: 500 },
+  exhibit_corridor_04: { x: 236, y: 10, z: -21900, rotateY: -6, width: 440 },
 
-  exhibit_5d: { x: -460, y: 0, z: -23200, rotateY: 22, width: 480 },
-  exhibit_5e: { x: 460, y: 0, z: -23400, rotateY: -22, width: 480 },
-  exhibit_5a: { x: -460, y: -20, z: -23900, rotateY: 22, width: 520 },
-  exhibit_5b: { x: -460, y: 0, z: -24400, rotateY: 22, width: 480 },
-  exhibit_5c: { x: 0, y: 0, z: -25000, rotateY: 0, width: 520 },
-  exhibit_5f: { x: 460, y: -10, z: -25400, rotateY: -18, width: 500 },
-  exhibit_5_choices: { x: 280, y: 0, z: -25720, rotateY: -12, width: 500 },
-  exhibit_corridor_05: { x: -236, y: 10, z: -26100, rotateY: 6, width: 440 },
+  exhibit_5d: { x: -460, y: 0, z: -23220, rotateY: 22, width: 480 },
+  exhibit_5e: { x: 460, y: 0, z: -23640, rotateY: -22, width: 480 },
+  exhibit_5a: { x: -460, y: -20, z: -24120, rotateY: 22, width: 520 },
+  exhibit_5f: { x: 460, y: -10, z: -24540, rotateY: -18, width: 500 },
+  exhibit_5b: { x: -460, y: 0, z: -25020, rotateY: 22, width: 480 },
+  exhibit_5c: { x: 0, y: 0, z: -25600, rotateY: 0, width: 520 },
+  exhibit_5_choices: { x: 280, y: 0, z: -26400, rotateY: -12, width: 500 },
+  exhibit_corridor_05: { x: -236, y: 10, z: -26780, rotateY: 6, width: 440 },
 
-  exhibit_6a: { x: -420, y: -10, z: -28100, rotateY: 16, width: 480 },
-  exhibit_6b: { x: 420, y: -10, z: -28100, rotateY: -16, width: 460 },
-  exhibit_6c: { x: 0, y: -10, z: -29000, rotateY: 0, width: 640 },
+  exhibit_6a: { x: -420, y: -10, z: -28120, rotateY: 16, width: 480 },
+  exhibit_6b: { x: 420, y: -10, z: -28120, rotateY: -16, width: 460 },
+  exhibit_6c: { x: 0, y: -10, z: -29100, rotateY: 0, width: 640 },
   exhibit_6d: { x: 0, y: 0, z: -30200, rotateY: 0, width: 500 },
 };
 
@@ -259,8 +259,22 @@ export const CORRIDOR_NEXT_GATE: Record<CorridorExhibitId, GateId> = {
   exhibit_corridor_05: "hall06",
 };
 
+/** 문짝에 붙는 장면. 로비 선택의 자리→hall01, 이후는 회랑 이미지. */
+export const GATE_SCENE_EXHIBIT: Partial<Record<GateId, string>> = {
+  hall01: "exhibit_lobby_monument",
+  hall02: "exhibit_corridor_01",
+  hall03: "exhibit_corridor_02",
+  hall04: "exhibit_corridor_03",
+  hall05: "exhibit_corridor_04",
+  hall06: "exhibit_corridor_05",
+};
+
 export function corridorExhibitForGate(gateId: GateId): CorridorExhibitId | undefined {
   return CORRIDOR_EXHIBIT_IDS.find((id) => CORRIDOR_NEXT_GATE[id] === gateId);
+}
+
+export function sceneExhibitForGate(gateId: GateId): string | undefined {
+  return GATE_SCENE_EXHIBIT[gateId];
 }
 
 export const CORRIDOR_WALLS = [

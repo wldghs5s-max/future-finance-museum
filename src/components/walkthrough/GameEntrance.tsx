@@ -24,10 +24,11 @@ export const GameEntrance: React.FC<GameEntranceProps> = ({
       title="나라살림게임"
       exhibitCode="CONSOLE 6-C"
       hideInspectButton
+      className="holo-accent holo-accent-cyan"
       onInspect={onStart}
     >
       <div
-        className="rounded-2xl overflow-hidden border-2 border-cyan-300/70 bg-[#0b1828] shadow-[0_0_40px_rgba(34,211,238,0.22)] cursor-pointer"
+        className="holo-panel holo-panel-cyan cursor-pointer"
         onClick={(e) => {
           e.stopPropagation();
           onStart();

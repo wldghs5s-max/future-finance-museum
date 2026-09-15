@@ -2,7 +2,6 @@ import React from "react";
 import { SpatialExhibitContainer } from "./SpatialExhibitContainer";
 import { ExhibitWallHeader, ExhibitWallMetrics } from "./ExhibitWallMetrics";
 import { exhibitHasDeepDetail, requireExhibit } from "../../data/walkthroughData";
-import { visualsForExhibit } from "../../data/visualAssets";
 import { generatedVisualFor } from "../../data/museumImages";
 import { ExhibitConceptImage } from "./ExhibitConceptImage";
 import { requirePose } from "../../data/spaceLayout";
@@ -13,33 +12,33 @@ const ACCENT: Record<
   { box: string; badge: string; label: string }
 > = {
   rose: {
-    box: "bg-[#2a1014]/88 border-rose-400/55 group-hover:border-rose-300/90",
-    badge: "bg-rose-950 border-rose-600 text-rose-200",
-    label: "text-rose-300",
+    box: "holo-panel holo-panel-rose",
+    badge: "bg-rose-950/70 border-rose-400/40 text-rose-100",
+    label: "text-rose-200",
   },
   sky: {
-    box: "bg-[#102038]/88 border-sky-400/50 group-hover:border-sky-300/90",
-    badge: "bg-sky-950 border-sky-600 text-sky-200",
-    label: "text-sky-300",
+    box: "holo-panel holo-panel-sky",
+    badge: "bg-sky-950/70 border-sky-400/40 text-sky-100",
+    label: "text-sky-200",
   },
   amber: {
-    box: "bg-[#2a1c0c]/88 border-amber-400/50 group-hover:border-amber-300/90",
-    badge: "bg-amber-950 border-amber-600 text-amber-200",
-    label: "text-amber-300",
+    box: "holo-panel holo-panel-amber",
+    badge: "bg-amber-950/70 border-amber-300/40 text-amber-100",
+    label: "text-amber-200",
   },
   emerald: {
-    box: "bg-[#0c241c]/88 border-emerald-400/50 group-hover:border-emerald-300/90",
-    badge: "bg-emerald-950 border-emerald-600 text-emerald-200",
+    box: "holo-panel holo-panel-emerald",
+    badge: "bg-emerald-950/70 border-emerald-300/40 text-emerald-100",
     label: "text-emerald-200",
   },
   violet: {
-    box: "bg-[#1e1230]/88 border-violet-400/50 group-hover:border-violet-300/90",
-    badge: "bg-violet-950 border-violet-600 text-violet-200",
+    box: "holo-panel holo-panel-violet",
+    badge: "bg-violet-950/70 border-violet-300/40 text-violet-100",
     label: "text-violet-200",
   },
   cyan: {
-    box: "bg-[#0c2438]/88 border-cyan-400/50 group-hover:border-cyan-300/90",
-    badge: "bg-cyan-950 border-cyan-600 text-cyan-200",
+    box: "holo-panel holo-panel-cyan",
+    badge: "bg-cyan-950/70 border-cyan-300/40 text-cyan-100",
     label: "text-cyan-200",
   },
 };
@@ -64,7 +63,6 @@ export const DataExhibit: React.FC<DataExhibitProps> = ({
   const exhibit = requireExhibit(id);
   const pose = requirePose(id);
   const theme = ACCENT[accent];
-  const hasVisual = visualsForExhibit(id).length > 0;
   const concept =
     id === "exhibit_lobby_monument" ? undefined : generatedVisualFor(id);
   const deep = exhibitHasDeepDetail(id);
@@ -80,25 +78,19 @@ export const DataExhibit: React.FC<DataExhibitProps> = ({
       title={exhibit.titleKo}
       exhibitCode={exhibit.code}
       interactive={Boolean(onLobbyWarp)}
+      className={`holo-accent holo-accent-${accent}`}
       onInspect={deep ? () => onInspect(id) : undefined}
     >
-      <div
-        className={`p-6 rounded-2xl border-2 shadow-2xl relative overflow-hidden transition-colors ${theme.box}`}
-      >
+      <div className={`p-6 ${theme.box}`}>
         <div className="flex items-center justify-between border-b border-white/15 pb-3 mb-3">
           <span
             className={`px-2 py-0.5 rounded border text-[10px] font-mono font-bold ${theme.badge}`}
           >
             {exhibit.code}
           </span>
-          {deep && (
-            <span className={`text-[10px] font-sans ${theme.label}`}>
-              표와 자세한 숫자는 상세에서
-            </span>
-          )}
         </div>
         {hallOpeningFor(id) && (
-          <p className="text-[11px] text-white font-semibold leading-relaxed mb-3 px-2.5 py-2 rounded-xl bg-black/25 border border-white/15">
+          <p className="text-[11px] text-white font-semibold leading-relaxed mb-3 px-2.5 py-2 rounded-xl holo-metric">
             {hallOpeningFor(id)}
           </p>
         )}
@@ -114,11 +106,6 @@ export const DataExhibit: React.FC<DataExhibitProps> = ({
           </p>
         )}
         <ExhibitWallMetrics exhibit={exhibit} max={metricCount} />
-        {hasVisual && deep && (
-          <p className="text-[10px] font-mono text-slate-400">
-            수치 차트는 상세에서
-          </p>
-        )}
         {onLobbyWarp && (
           <button
             type="button"

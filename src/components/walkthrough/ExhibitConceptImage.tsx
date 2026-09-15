@@ -5,7 +5,7 @@ export const ExhibitConceptImage: React.FC<{ visual: GeneratedMuseumImage }> = (
   visual,
 }) => (
   <div
-    className="relative mb-3 overflow-hidden rounded-xl bg-[#070d16] border border-white/10"
+    className="relative mb-3 overflow-hidden rounded-xl holo-metric"
     style={{ aspectRatio: visual.aspect }}
   >
     <img

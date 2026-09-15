@@ -18,7 +18,7 @@ export const ExhibitWallMetrics: React.FC<ExhibitWallMetricsProps> = ({
       {metrics.map((metric) => (
         <div
           key={metric.label + metric.display}
-          className="p-3 rounded-xl bg-slate-950/80 border border-slate-800"
+            className="p-3 rounded-xl holo-metric"
         >
           <span className="text-[10px] font-mono text-slate-400 block mb-0.5">
             {metric.label}
