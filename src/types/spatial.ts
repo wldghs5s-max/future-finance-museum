@@ -10,12 +10,11 @@ export type SpatialZoneId =
   | "corridor_04"
   | "hall_05"
   | "corridor_05"
-  | "hall_06"
-  | "exit";
+  | "hall_06";
 
 export interface SpatialZoneMeta {
   id: SpatialZoneId;
-  zoneType: "lobby" | "hall" | "corridor" | "exit";
+  zoneType: "lobby" | "hall" | "corridor";
   hallNumber?: string;
   nameKo: string;
   nameEn: string;
@@ -159,18 +158,7 @@ export const SPATIAL_ZONES: SpatialZoneMeta[] = [
     nameEn: "HALL 06: FISCAL LAB",
     themeColor: "#00F0FF",
     prevZoneId: "corridor_05",
-    nextZoneId: "exit",
     description:
-      "4대 공식 시나리오 및 15개 핵심 정책 탐색 터미널, 미래세대 캐릭터 연출 화면",
-  },
-  {
-    id: "exit",
-    zoneType: "exit",
-    nameKo: "전시 관람 종료 라운지",
-    nameEn: "MUSEUM EXIT & SUMMARY",
-    themeColor: "#38BDF8",
-    prevZoneId: "hall_06",
-    description:
-      "전체 6개 전시관 관람 성과와 재정미래관 결과 리포트를 확인하고 퇴장하는 라운지",
+      "세금·씀씀이·미래 부담을 직접 고르는 나라살림 랩",
   },
 ];

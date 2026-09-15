@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SpatialZoneId } from "./types/spatial";
 import { PortalIntro } from "./components/intro/PortalIntro";
 import { MuseumMinimalHUD } from "./components/spatial/MuseumMinimalHUD";
@@ -8,78 +8,38 @@ import {
 } from "./components/spatial/MuseumMapModal";
 import { GlossaryModal } from "./components/common/GlossaryModal";
 import { MuseumViewport } from "./components/walkthrough/MuseumViewport";
-import {
-  ExhibitDetailDrawer,
-  ExhibitDetailData,
-} from "./components/walkthrough/ExhibitDetailDrawer";
+import { ExhibitDetailDrawer } from "./components/walkthrough/ExhibitDetailDrawer";
 import { EXHIBIT_DETAILS_MAP } from "./data/walkthroughData";
 import { useMuseumLocomotion } from "./hooks/useMuseumLocomotion";
-import { FiscalSimulationModal } from "./components/simulation/FiscalSimulationModal";
-import {
-  OFFICIAL_PRESETS,
-  computeSimulationResult,
-} from "./data/simulationData";
+import { CivicLabGame } from "./components/simulation/CivicLabGame";
+import { MUSEUM_SPACE_GUIDE } from "./types/exhibit";
+import { MAX_WORLD_Z, MUSEUM_ENTRANCE_Z } from "./data/spaceLayout";
 
 export function App() {
-  // 포탈 오프닝 영상 활성화 상태
   const [isIntroActive, setIsIntroActive] = useState(true);
-
-  // MUSEUM MAP 도면 모달 상태
   const [isMapOpen, setIsMapOpen] = useState(false);
-
-  // 재정 용어사전 모달 상태
   const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
-
-  // 현장 상세 관람 드로어 상태 (선택된 전시물 데이터)
-  const [selectedExhibit, setSelectedExhibit] =
-    useState<ExhibitDetailData | null>(null);
-
-  // 방문 구역 추적
+  const [glossaryTermId, setGlossaryTermId] = useState<string | null>(null);
+  const [glossarySession, setGlossarySession] = useState(0);
+  const [selectedExhibitId, setSelectedExhibitId] = useState<string | null>(null);
+  const [focusDirectionId, setFocusDirectionId] = useState<string | null>(null);
   const [visitedZones, setVisitedZones] = useState<Set<SpatialZoneId>>(
     new Set(["lobby"]),
   );
-
-  // ==========================================================
-  // 시뮬레이션 콘솔 상태 (Hall 06 3D 키오스크 & 전용 모달 동기화)
-  // ==========================================================
-  const [isSimulationModalOpen, setIsSimulationModalOpen] = useState(false);
-  const [selectedPolicies, setSelectedPolicies] = useState<Set<string>>(
-    new Set(OFFICIAL_PRESETS.defense_2.policies),
+  const [inspectedExhibits, setInspectedExhibits] = useState<Set<string>>(
+    new Set(),
   );
+  const [isSimulationModalOpen, setIsSimulationModalOpen] = useState(false);
+  const selectedExhibit = selectedExhibitId
+    ? EXHIBIT_DETAILS_MAP[selectedExhibitId] ?? null
+    : null;
 
-  const simulationResult = computeSimulationResult(selectedPolicies);
-
-  const handleTogglePolicy = (id: string) => {
-    setSelectedPolicies((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  };
-
-  const handleApplyPreset = (presetKey: string) => {
-    const preset = OFFICIAL_PRESETS[presetKey];
-    if (preset) {
-      setSelectedPolicies(new Set(preset.policies));
-    }
-  };
-
-  const handleClearAllPolicies = () => {
-    setSelectedPolicies(new Set());
-  };
-
-  // 모달 또는 드로어가 열려 있을 때는 보행 스크롤을 일시 중지하여 내부 컨텐츠 조작 편의성 극대화
   const isLocomotionPaused =
     isSimulationModalOpen ||
     isMapOpen ||
     isGlossaryOpen ||
     selectedExhibit !== null;
 
-  // 연속 2.5D 레일 보행 훅 (카메라 Z 이동, LERP 관성, 직관적인 마우스 시선 둘러보기 연동)
   const {
     cameraZ,
     progress,
@@ -89,25 +49,55 @@ export function App() {
     lookRotateY,
     lookRotateX,
     jumpTo,
+    warpTo,
+    warping,
   } = useMuseumLocomotion({
-    maxWorldZ: 26500,
-    dampingFactor: 0.08, // 부드러운 보행 감속
-    scrollSensitivity: 0.9, // 휠/트랙패드 감도
+    maxWorldZ: MAX_WORLD_Z,
+    dampingFactor: 0.08,
+    scrollSensitivity: 0.9,
     paused: isLocomotionPaused,
   });
 
-  // 포탈 입장 완료 시 카메라를 박물관 입구에 배치
+  useEffect(() => {
+    setVisitedZones((prev) => {
+      if (prev.has(currentZoneId)) return prev;
+      return new Set([...prev, currentZoneId]);
+    });
+  }, [currentZoneId]);
+
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    const exhibit = query.get("exhibit");
+    const openGame = query.has("game");
+    if (query.has("skipIntro") || exhibit || openGame) {
+      setIsIntroActive(false);
+    }
+    const cameraStart = Number(query.get("z"));
+    if (Number.isFinite(cameraStart) && cameraStart >= 0) {
+      jumpTo(cameraStart);
+    } else if (query.has("skipIntro")) {
+      jumpTo(MUSEUM_ENTRANCE_Z);
+    }
+    if (exhibit && EXHIBIT_DETAILS_MAP[exhibit]) {
+      setSelectedExhibitId(exhibit);
+    }
+    if (openGame) setIsSimulationModalOpen(true);
+  }, []);
+
   const handleEnterMuseum = () => {
     setIsIntroActive(false);
-    jumpTo(80); // 입구 바로 앞
+    jumpTo(MUSEUM_ENTRANCE_Z);
   };
 
-  // 포탈 영상 다시보기
-  const handleReplayPortal = () => {
-    setIsIntroActive(true);
+  const handleWarpToLobby = () => {
+    setSelectedExhibitId(null);
+    setFocusDirectionId(null);
+    setIsMapOpen(false);
+    setIsGlossaryOpen(false);
+    setIsIntroActive(false);
+    warpTo(MUSEUM_ENTRANCE_Z);
   };
 
-  // 도면에서 구역 선택 시 해당 카메라 위치로 도약
   const handleSelectMapZone = (zoneId: SpatialZoneId) => {
     const targetZ = ZONE_CAMERA_Z_MAP[zoneId];
     if (targetZ !== undefined) {
@@ -116,74 +106,98 @@ export function App() {
     }
   };
 
-  // 전시물 현장 상세 관람 열기
-  const handleInspectExhibit = (exhibitId: string) => {
-    const detail = EXHIBIT_DETAILS_MAP[exhibitId];
-    if (detail) {
-      setSelectedExhibit(detail);
-    }
+  const handleInspectExhibit = (exhibitId: string, directionId?: string) => {
+    if (exhibitId === "exhibit_lobby_monument") return;
+    if (!EXHIBIT_DETAILS_MAP[exhibitId]) return;
+    setSelectedExhibitId(exhibitId);
+    setFocusDirectionId(directionId ?? null);
+    setInspectedExhibits((prev) => new Set([...prev, exhibitId]));
+  };
+
+  const openTerm = (termId: string) => {
+    setGlossaryTermId(termId);
+    setGlossarySession((n) => n + 1);
+    setIsGlossaryOpen(true);
   };
 
   return (
-    <div className="min-h-screen bg-[#030611] text-slate-100 font-sans selection:bg-cyan-500 selection:text-black overflow-hidden select-none">
-      {/* 1. 미래포탈 오프닝 시퀀스 */}
+    <div className="min-h-screen bg-[#07111f] text-slate-100 font-sans selection:bg-cyan-500 selection:text-black overflow-hidden select-none">
       {isIntroActive && <PortalIntro onEnterMuseum={handleEnterMuseum} />}
 
-      {/* 2. 연속 2.5D 공간 보행 박물관 엔진 (단일 3D 좌표계 월드) */}
       {!isIntroActive && (
         <>
-          {/* 상단 미니멀 관람 HUD (앞으로가기 버튼 전면 제거, 공간명 및 진행도 유지) */}
           <MuseumMinimalHUD
             currentZoneNameKo={currentZoneNameKo}
             currentZoneNameEn={currentZoneNameEn}
             progress={progress}
+            visitedCount={visitedZones.size}
+            inspectedCount={inspectedExhibits.size}
             onOpenMap={() => setIsMapOpen(true)}
-            onOpenGlossary={() => setIsGlossaryOpen(true)}
-            onReplayPortal={handleReplayPortal}
+            onOpenGlossary={() => {
+              setGlossaryTermId(null);
+              setGlossarySession((n) => n + 1);
+              setIsGlossaryOpen(true);
+            }}
+            onReplayPortal={() => setIsIntroActive(true)}
           />
 
-          {/* 메인 2.5D 뷰포트 (마우스 휠 스크롤 전진/후진 + 마우스 시선 둘러보기) */}
           <MuseumViewport
             cameraZ={cameraZ}
             lookRotateY={lookRotateY}
             lookRotateX={lookRotateX}
             onInspectExhibit={handleInspectExhibit}
-            selectedPolicies={selectedPolicies}
-            simulationResult={simulationResult}
             onOpenSimulationModal={() => setIsSimulationModalOpen(true)}
+            onWarpToLobby={handleWarpToLobby}
           />
 
-          {/* 전용 재정 정책 시뮬레이션 콘솔 조작 모달 (스크롤 충돌 완전 해결 및 직관적 조작 제공) */}
-          <FiscalSimulationModal
+          {warping && (
+            <div
+              className="holo-warp-veil"
+              data-testid="lobby-warp-veil"
+              aria-hidden
+            />
+          )}
+
+          <CivicLabGame
             isOpen={isSimulationModalOpen}
             onClose={() => setIsSimulationModalOpen(false)}
-            selectedPolicies={selectedPolicies}
-            onTogglePolicy={handleTogglePolicy}
-            onApplyPreset={handleApplyPreset}
-            onClearAll={handleClearAllPolicies}
-            simulationResult={simulationResult}
+            onBrowseHalls={() => {
+              setIsSimulationModalOpen(false);
+              setIsMapOpen(true);
+            }}
           />
 
-          {/* 전시물 클릭 시 현장에서 상세 수치를 확인하는 박물관 캡션 디테일 드로어 (페이지 전환 없음) */}
           <ExhibitDetailDrawer
             data={selectedExhibit}
-            onClose={() => setSelectedExhibit(null)}
+            focusDirectionId={focusDirectionId}
+            onClose={() => {
+              setSelectedExhibitId(null);
+              setFocusDirectionId(null);
+            }}
+            onOpenTerm={openTerm}
+            onOpenExhibit={handleInspectExhibit}
           />
 
-          {/* 전체 박물관 도면 모달 (MUSEUM MAP & 카메라 도약) */}
           <MuseumMapModal
             isOpen={isMapOpen}
             currentZone={currentZoneId}
             visitedZones={visitedZones}
+            inspectedCount={inspectedExhibits.size}
+            progress={progress}
             onClose={() => setIsMapOpen(false)}
             onSelectZone={handleSelectMapZone}
           />
 
-          {/* 핵심 재정 용어사전 모달 */}
           <GlossaryModal
+            key={glossarySession}
             isOpen={isGlossaryOpen}
             onClose={() => setIsGlossaryOpen(false)}
+            initialTermId={glossaryTermId}
           />
+
+          <div className="fixed bottom-3 left-4 z-30 pointer-events-none max-w-sm text-[10px] text-slate-500 hidden md:block">
+            {MUSEUM_SPACE_GUIDE.civicNote}
+          </div>
         </>
       )}
     </div>

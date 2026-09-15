@@ -92,25 +92,32 @@ export const PortalIntro: React.FC<PortalIntroProps> = ({ onEnterMuseum }) => {
 
       {/* 2. 미래포탈 영상 재생 영역 */}
       <div
-        className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
+        className={`portal-video-stage transition-opacity duration-1000 ${
           phase === "playing"
             ? "opacity-100"
             : phase === "arrived"
-              ? "opacity-30 blur-md scale-105"
+              ? "opacity-0"
               : "opacity-0"
         }`}
       >
         {!videoError ? (
-          <video
-            ref={videoRef}
-            src="/videos/portal_intro.mp4"
-            className="w-full h-full object-cover"
-            playsInline
-            muted={isMuted}
-            onTimeUpdate={handleTimeUpdate}
-            onEnded={handleVideoEnded}
-            onError={() => setVideoError(true)}
-          />
+          <div className="portal-video-frame" data-testid="portal-video-frame">
+            <video
+              ref={videoRef}
+              src="/videos/portal_intro.mp4"
+              className="portal-video-clip"
+              playsInline
+              muted={isMuted}
+              onTimeUpdate={handleTimeUpdate}
+              onEnded={handleVideoEnded}
+              onError={() => setVideoError(true)}
+            />
+            <div
+              className="portal-video-shade"
+              data-testid="portal-video-shade"
+              aria-hidden="true"
+            />
+          </div>
         ) : (
           /* Fallback: 영상 로드 불가 시 인터랙티브 사이버네틱 관문 그래픽 */
           <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-slate-950 via-[#0A1128] to-slate-950 p-6 text-center">
@@ -140,7 +147,7 @@ export const PortalIntro: React.FC<PortalIntroProps> = ({ onEnterMuseum }) => {
       {phase === "playing" && (
         <>
           {/* 상단 미니 배너 */}
-          <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-10 pointer-events-auto">
+          <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-30 pointer-events-auto">
             <div className="flex items-center gap-3">
               <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping" />
               <span className="text-xs tracking-widest text-cyan-300 font-mono uppercase bg-slate-900/80 px-2.5 py-1 rounded border border-cyan-500/30">
@@ -173,7 +180,7 @@ export const PortalIntro: React.FC<PortalIntroProps> = ({ onEnterMuseum }) => {
           </div>
 
           {/* 하단 진행 프로그레스 바 */}
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-900">
+          <div className="absolute bottom-0 left-0 right-0 z-30 h-1 bg-slate-900">
             <div
               className="h-full bg-gradient-to-r from-cyan-500 via-sky-400 to-blue-500 transition-all duration-100 ease-out glow-cyan"
               style={{ width: `${progress}%` }}

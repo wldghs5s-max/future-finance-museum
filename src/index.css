@@ -160,6 +160,248 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
+@keyframes holo-lamp-pulse {
+  0%,
+  100% {
+    opacity: 0.82;
+    box-shadow:
+      0 0 8px 1px rgba(165, 243, 252, 0.95),
+      0 0 22px 6px rgba(34, 211, 238, 0.45);
+  }
+  50% {
+    opacity: 1;
+    box-shadow:
+      0 0 12px 2px rgba(236, 254, 255, 1),
+      0 0 28px 9px rgba(34, 211, 238, 0.6);
+  }
+}
+
+.holo-lamp {
+  position: absolute;
+  left: 50%;
+  top: -2.75rem;
+  z-index: 4;
+  width: 9.5rem;
+  height: 3px;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: #ecfeff;
+  animation: holo-lamp-pulse 2.8s ease-in-out infinite;
+}
+
+.holo-lamp-focus {
+  width: 11rem;
+  height: 4px;
+}
+
+.holo-beam {
+  position: absolute;
+  left: 50%;
+  top: -2.75rem;
+  z-index: 1;
+  width: 100%;
+  height: 3.1rem;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    to bottom,
+    rgba(165, 243, 252, 0.42) 0%,
+    rgba(34, 211, 238, 0.12) 58%,
+    rgba(34, 211, 238, 0.03) 100%
+  );
+  clip-path: polygon(34% 0, 66% 0, 100% 100%, 0 100%);
+  filter: blur(0.4px);
+}
+
+.holo-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(165, 243, 252, 0.4);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(125, 211, 252, 0.2) 0%,
+      rgba(8, 24, 42, 0.46) 26%,
+      rgba(6, 12, 24, 0.34) 100%
+    );
+  box-shadow:
+    inset 0 22px 40px -18px rgba(165, 243, 252, 0.38),
+    0 0 28px rgba(34, 211, 238, 0.14);
+  backdrop-filter: blur(7px);
+}
+
+.holo-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(207, 250, 254, 0.2),
+    transparent 24%
+  );
+}
+
+.holo-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.05) 0px,
+    rgba(255, 255, 255, 0.05) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+}
+
+.holo-panel > * {
+  position: relative;
+  z-index: 3;
+}
+
+.holo-panel > [data-testid="term-popover-backdrop"] {
+  position: absolute;
+  z-index: 20;
+}
+
+.holo-panel-rose {
+  border-color: rgba(251, 113, 133, 0.42);
+  box-shadow:
+    inset 0 22px 40px -18px rgba(251, 113, 133, 0.28),
+    0 0 28px rgba(244, 63, 94, 0.12);
+}
+
+.holo-panel-amber {
+  border-color: rgba(252, 211, 77, 0.42);
+  box-shadow:
+    inset 0 22px 40px -18px rgba(252, 211, 77, 0.26),
+    0 0 28px rgba(245, 158, 11, 0.12);
+}
+
+.holo-panel-emerald {
+  border-color: rgba(110, 231, 183, 0.4);
+  box-shadow:
+    inset 0 22px 40px -18px rgba(110, 231, 183, 0.26),
+    0 0 28px rgba(16, 185, 129, 0.12);
+}
+
+.holo-panel-violet {
+  border-color: rgba(196, 181, 253, 0.42);
+  box-shadow:
+    inset 0 22px 40px -18px rgba(196, 181, 253, 0.28),
+    0 0 28px rgba(167, 139, 250, 0.12);
+}
+
+.holo-panel-sky,
+.holo-panel-cyan {
+  border-color: rgba(125, 211, 252, 0.45);
+}
+
+.holo-accent-rose .holo-lamp {
+  background: #ffe4e6;
+  animation: none;
+  box-shadow:
+    0 0 10px 2px rgba(251, 113, 133, 0.95),
+    0 0 24px 8px rgba(244, 63, 94, 0.45);
+}
+.holo-accent-rose .holo-beam {
+  background: linear-gradient(
+    to bottom,
+    rgba(251, 113, 133, 0.46) 0%,
+    rgba(244, 63, 94, 0.12) 58%,
+    rgba(244, 63, 94, 0.03) 100%
+  );
+}
+
+.holo-accent-amber .holo-lamp {
+  background: #fef3c7;
+  animation: none;
+  box-shadow:
+    0 0 10px 2px rgba(252, 211, 77, 0.95),
+    0 0 24px 8px rgba(245, 158, 11, 0.42);
+}
+.holo-accent-amber .holo-beam {
+  background: linear-gradient(
+    to bottom,
+    rgba(252, 211, 77, 0.46) 0%,
+    rgba(245, 158, 11, 0.12) 58%,
+    rgba(245, 158, 11, 0.03) 100%
+  );
+}
+
+.holo-accent-emerald .holo-lamp {
+  background: #d1fae5;
+  animation: none;
+  box-shadow:
+    0 0 10px 2px rgba(110, 231, 183, 0.95),
+    0 0 24px 8px rgba(16, 185, 129, 0.42);
+}
+.holo-accent-emerald .holo-beam {
+  background: linear-gradient(
+    to bottom,
+    rgba(110, 231, 183, 0.46) 0%,
+    rgba(16, 185, 129, 0.12) 58%,
+    rgba(16, 185, 129, 0.03) 100%
+  );
+}
+
+.holo-accent-violet .holo-lamp {
+  background: #ede9fe;
+  animation: none;
+  box-shadow:
+    0 0 10px 2px rgba(196, 181, 253, 0.95),
+    0 0 24px 8px rgba(167, 139, 250, 0.42);
+}
+.holo-accent-violet .holo-beam {
+  background: linear-gradient(
+    to bottom,
+    rgba(196, 181, 253, 0.46) 0%,
+    rgba(167, 139, 250, 0.12) 58%,
+    rgba(167, 139, 250, 0.03) 100%
+  );
+}
+
+.holo-accent-sky .holo-lamp,
+.holo-accent-cyan .holo-lamp {
+  background: #ecfeff;
+}
+
+.holo-warp-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, rgba(165, 243, 252, 0.12) 0%, transparent 58%),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 11px,
+      rgba(165, 243, 252, 0.1) 11px 13px
+    );
+  mix-blend-mode: screen;
+  animation: holo-warp-rush 0.28s linear infinite;
+}
+
+@keyframes holo-warp-rush {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 0 0, 0 40px;
+  }
+}
+
+.holo-metric {
+  background: rgba(8, 18, 32, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
 /* Exhibit Stand & Plaque (실제 박물관 전시물 느낌) */
 .exhibit-pedestal {
   background: linear-gradient(180deg, #0d1730 0%, #060a16 100%);
@@ -196,4 +438,73 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #00f0ff;
+}
+
+/* 입장 영상: 원본 비율을 유지한 채 화면을 채우고, 그 위에 좌우 장막을 겹침 */
+.portal-video-stage {
+  position: absolute;
+  inset: 0;
+  background: #050811;
+}
+
+.portal-video-frame {
+  position: absolute;
+  inset: 0;
+}
+
+.portal-video-clip {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.portal-video-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* 하단 워터마크 높이에 중심을 둔 좌우 커튼. 중앙 포탈은 비움 */
+  background:
+    radial-gradient(
+      ellipse 34% 95% at 0% 78%,
+      rgb(5 8 17 / 0.76) 0%,
+      rgb(5 8 17 / 0.72) 32%,
+      rgb(5 8 17 / 0.4) 54%,
+      rgb(5 8 17 / 0.12) 72%,
+      rgb(5 8 17 / 0) 88%
+    ),
+    radial-gradient(
+      ellipse 34% 95% at 100% 78%,
+      rgb(5 8 17 / 0.76) 0%,
+      rgb(5 8 17 / 0.72) 32%,
+      rgb(5 8 17 / 0.4) 54%,
+      rgb(5 8 17 / 0.12) 72%,
+      rgb(5 8 17 / 0) 88%
+    );
+}
+
+@media (max-aspect-ratio: 3 / 4) {
+  /* 세로 화면에서는 워터마크가 이미 잘리므로 장막을 얇게 유지 */
+  .portal-video-shade {
+    background:
+      radial-gradient(
+        ellipse 18% 90% at 0% 78%,
+        rgb(5 8 17 / 0.5) 0%,
+        rgb(5 8 17 / 0.28) 42%,
+        rgb(5 8 17 / 0) 78%
+      ),
+      radial-gradient(
+        ellipse 18% 90% at 100% 78%,
+        rgb(5 8 17 / 0.5) 0%,
+        rgb(5 8 17 / 0.28) 42%,
+        rgb(5 8 17 / 0) 78%
+      );
+  }
+}
+
+.village-zone-focus {
+  box-shadow: inset 0 0 0 3px rgba(103, 232, 249, 0.9);
+  background: rgba(8, 47, 73, 0.14);
+  pointer-events: none;
 }

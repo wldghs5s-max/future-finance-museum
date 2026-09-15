@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { SpatialZoneId } from "../types/spatial";
+import { MAX_WORLD_Z, zoneInfoForCamera } from "../data/spaceLayout";
 
 export interface LocomotionOptions {
   maxWorldZ?: number;
@@ -21,10 +22,18 @@ export interface LocomotionState {
   lookTranslateX: number; // 마우스 미세 수평 이동 (px)
   lookTranslateY: number; // 마우스 미세 수직 이동 (px)
   jumpTo: (z: number) => void;
+  warpTo: (z: number, durationMs?: number) => void;
+  warping: boolean;
 }
 
-// 전체 14개 주요 공간 총 월드 깊이: 26,500px
-export const DEFAULT_MAX_WORLD_Z = 26500;
+export const LOBBY_WARP_MS = 720;
+
+function easeInCubic(t: number) {
+  return t * t * t;
+}
+
+// 지도 12개 구역 + 입장 오프닝. 월드 깊이는 spaceLayout.MAX_WORLD_Z
+export const DEFAULT_MAX_WORLD_Z = MAX_WORLD_Z;
 
 export function useMuseumLocomotion(
   options?: LocomotionOptions,
@@ -36,6 +45,14 @@ export function useMuseumLocomotion(
   const [cameraZ, setCameraZ] = useState(0);
   const targetZRef = useRef(0);
   const cameraZRef = useRef(0);
+  const warpRef = useRef<{
+    from: number;
+    surge: number;
+    land: number;
+    start: number;
+    duration: number;
+  } | null>(null);
+  const [warping, setWarping] = useState(false);
   const [isWalking, setIsWalking] = useState(false);
   const walkTimeoutRef = useRef<number | null>(null);
 
@@ -51,96 +68,7 @@ export function useMuseumLocomotion(
     lookTranslateY: 0,
   });
 
-  // 14개 주요 공간 구역 판별 로직 (Z 좌표 기준)
-  const getZoneInfo = (
-    z: number,
-  ): { id: SpatialZoneId; nameKo: string; nameEn: string } => {
-    if (z < 600) {
-      return {
-        id: "lobby",
-        nameKo: "박물관 정문 입구",
-        nameEn: "MUSEUM ENTRANCE",
-      };
-    } else if (z < 2200) {
-      return {
-        id: "lobby",
-        nameKo: "재정미래관 중앙 로비",
-        nameEn: "GRAND LOBBY",
-      };
-    } else if (z < 4800) {
-      return {
-        id: "hall_01",
-        nameKo: "HALL 01: 인구변화 전시장",
-        nameEn: "HALL 01: DEMOGRAPHY",
-      };
-    } else if (z < 6000) {
-      return {
-        id: "corridor_01",
-        nameKo: "세대·복지 회랑 (복도 01)",
-        nameEn: "CORRIDOR 01: WELFARE TRANSIT",
-      };
-    } else if (z < 8800) {
-      return {
-        id: "hall_02",
-        nameKo: "HALL 02: 복지 및 연금 전시장",
-        nameEn: "HALL 02: WELFARE & PENSION",
-      };
-    } else if (z < 10000) {
-      return {
-        id: "corridor_02",
-        nameKo: "기후 회랑 (복도 02)",
-        nameEn: "CORRIDOR 02: CLIMATE TRANSIT",
-      };
-    } else if (z < 12800) {
-      return {
-        id: "hall_03",
-        nameKo: "HALL 03: 환경 문제 전시장",
-        nameEn: "HALL 03: ENVIRONMENT & CLIMATE",
-      };
-    } else if (z < 14000) {
-      return {
-        id: "corridor_03",
-        nameKo: "AI 회랑 (복도 03)",
-        nameEn: "CORRIDOR 03: AI TRANSIT",
-      };
-    } else if (z < 16800) {
-      return {
-        id: "hall_04",
-        nameKo: "HALL 04: AI 기술 전시장",
-        nameEn: "HALL 04: AI & FUTURE LABOR",
-      };
-    } else if (z < 18000) {
-      return {
-        id: "corridor_04",
-        nameKo: "악어의 입 회랑 (복도 04)",
-        nameEn: "CORRIDOR 04: FISCAL TRAJECTORY",
-      };
-    } else if (z < 20800) {
-      return {
-        id: "hall_05",
-        nameKo: "HALL 05: 장기 재정 전망관",
-        nameEn: "HALL 05: FISCAL OUTLOOK",
-      };
-    } else if (z < 22000) {
-      return {
-        id: "corridor_05",
-        nameKo: "시뮬레이션 게이트 회랑 (복도 05)",
-        nameEn: "CORRIDOR 05: LAB ACCESS",
-      };
-    } else if (z < 25200) {
-      return {
-        id: "hall_06",
-        nameKo: "HALL 06: 재정 시뮬레이션관 (나라살림게임 랩)",
-        nameEn: "HALL 06: FISCAL LAB",
-      };
-    } else {
-      return {
-        id: "exit",
-        nameKo: "전시 관람 종료 라운지",
-        nameEn: "MUSEUM EXIT & SUMMARY",
-      };
-    }
-  };
+  const getZoneInfo = (z: number) => zoneInfoForCamera(z);
 
   const markWalking = useCallback(() => {
     setIsWalking(true);
@@ -152,27 +80,77 @@ export function useMuseumLocomotion(
     }, 200);
   }, []);
 
+  const resetLook = useCallback(() => {
+    targetMouseXRef.current = 0;
+    targetMouseYRef.current = 0;
+    mouseXRef.current = 0;
+    mouseYRef.current = 0;
+    setLookState({
+      lookRotateY: 0,
+      lookRotateX: 0,
+      lookTranslateX: 0,
+      lookTranslateY: 0,
+    });
+  }, []);
+
   // 순간 이동 (도면 점프 등)
   const jumpTo = useCallback(
     (z: number) => {
       const clamped = Math.max(0, Math.min(z, maxZ));
+      warpRef.current = null;
+      setWarping(false);
       targetZRef.current = clamped;
+      cameraZRef.current = clamped;
+      setCameraZ(clamped);
+      resetLook();
       markWalking();
     },
-    [maxZ, markWalking],
+    [maxZ, markWalking, resetLook],
+  );
+
+  // 로비 워프: 후진하지 않고 앞으로 가속한 뒤 정문으로 이어진다
+  const warpTo = useCallback(
+    (z: number, durationMs = LOBBY_WARP_MS) => {
+      const land = Math.max(0, Math.min(z, maxZ));
+      const from = cameraZRef.current;
+      resetLook();
+      if (Math.abs(from - land) < 2) {
+        warpRef.current = null;
+        setWarping(false);
+        cameraZRef.current = land;
+        targetZRef.current = land;
+        setCameraZ(land);
+        return;
+      }
+      const surge = from + Math.max(2600, maxZ - from + 1400);
+      warpRef.current = {
+        from,
+        surge,
+        land,
+        start: performance.now(),
+        duration: Math.max(160, durationMs),
+      };
+      setWarping(true);
+      markWalking();
+    },
+    [maxZ, markWalking, resetLook],
   );
 
   const isPaused = options?.paused ?? false;
 
   // 마우스 이동, 휠, 키보드 이벤트 리스너
   useEffect(() => {
-    // 1. 마우스 휠 리스너 (전진/후진 스크롤)
+    // 1. 마우스 휠 리스너 (위=전진, 아래=후진. 게임/상세 내부 스크롤은 paused에서 통과)
     const handleWheel = (e: WheelEvent) => {
       // 모달/시뮬레이션 모드 활성화 시 보행 스크롤 중지 및 내부 컨텐츠 자연 스크롤 허용
       if (isPaused) return;
+      if (warpRef.current) {
+        e.preventDefault();
+        return;
+      }
 
       e.preventDefault();
-      const delta = e.deltaY * sensitivity;
+      const delta = -e.deltaY * sensitivity;
       targetZRef.current = Math.max(
         0,
         Math.min(targetZRef.current + delta, maxZ),
@@ -182,7 +160,7 @@ export function useMuseumLocomotion(
 
     // 2. 마우스 커서 위치 리스너 (마우스 커서 방향을 따라 직관적으로 고개 돌리기)
     const handleMouseMove = (e: MouseEvent) => {
-      if (isPaused) return;
+      if (isPaused || warpRef.current) return;
       const normX = e.clientX / window.innerWidth - 0.5; // -0.5 ~ +0.5
       const normY = e.clientY / window.innerHeight - 0.5; // -0.5 ~ +0.5
       targetMouseXRef.current = normX;
@@ -191,7 +169,7 @@ export function useMuseumLocomotion(
 
     // 3. 키보드 방향키 리스너
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isPaused) return;
+      if (isPaused || warpRef.current) return;
       let delta = 0;
       if (e.key === "ArrowDown" || e.key === " " || e.key === "PageDown") {
         delta = e.key === "PageDown" ? 600 : 150;
@@ -212,12 +190,12 @@ export function useMuseumLocomotion(
     // 4. 모바일 터치 스와이프 리스너
     let touchStartY = 0;
     const handleTouchStart = (e: TouchEvent) => {
-      if (isPaused) return;
+      if (isPaused || warpRef.current) return;
       touchStartY = e.touches[0].clientY;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (isPaused) return;
+      if (isPaused || warpRef.current) return;
       const currentY = e.touches[0].clientY;
       const deltaY = (touchStartY - currentY) * 1.5;
       touchStartY = currentY;
@@ -251,11 +229,33 @@ export function useMuseumLocomotion(
     let animId: number;
 
     const tick = () => {
-      // 1. Z축 전진/후진 보행 LERP
-      const diffZ = targetZRef.current - cameraZRef.current;
-      if (Math.abs(diffZ) > 0.05) {
-        cameraZRef.current += diffZ * damping;
-        setCameraZ(cameraZRef.current);
+      const warp = warpRef.current;
+      if (warp) {
+        const t = Math.min(1, (performance.now() - warp.start) / warp.duration);
+        const wrapAt = 0.82;
+        let next: number;
+        if (t < wrapAt) {
+          next = warp.from + (warp.surge - warp.from) * easeInCubic(t / wrapAt);
+          targetZRef.current = warp.surge;
+        } else {
+          next = warp.land;
+          targetZRef.current = warp.land;
+        }
+        cameraZRef.current = next;
+        setCameraZ(next);
+        if (t >= 1) {
+          cameraZRef.current = warp.land;
+          targetZRef.current = warp.land;
+          setCameraZ(warp.land);
+          warpRef.current = null;
+          setWarping(false);
+        }
+      } else {
+        const diffZ = targetZRef.current - cameraZRef.current;
+        if (Math.abs(diffZ) > 0.05) {
+          cameraZRef.current += diffZ * damping;
+          setCameraZ(cameraZRef.current);
+        }
       }
 
       // 2. 마우스 시선 LERP
@@ -286,7 +286,7 @@ export function useMuseumLocomotion(
   }, [damping]);
 
   const zoneInfo = getZoneInfo(cameraZ);
-  const progress = Math.min(cameraZ / maxZ, 1);
+  const progress = Math.min(Math.max(cameraZ, 0) / maxZ, 1);
 
   return {
     cameraZ,
@@ -301,5 +301,7 @@ export function useMuseumLocomotion(
     lookTranslateX: lookState.lookTranslateX,
     lookTranslateY: lookState.lookTranslateY,
     jumpTo,
+    warpTo,
+    warping,
   };
 }

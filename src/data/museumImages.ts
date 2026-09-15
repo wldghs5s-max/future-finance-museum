@@ -1,0 +1,198 @@
+export interface GeneratedMuseumImage {
+  id: string;
+  src: string;
+  alt: string;
+  aspect: `${number} / ${number}`;
+  exhibitIds: string[];
+  placement: string;
+  promptSummary: string;
+}
+
+/** 생성 이미지 내부 기록. 전시 본문에는 노출하지 않음. */
+export const GENERATED_MUSEUM_IMAGES: GeneratedMuseumImage[] = [
+  {
+    id: "lobby-six-pillars",
+    src: "/images/museum/lobby-six-pillars.png",
+    alt: "원형 받침대 위에 여섯 주제 기둥이 선 조형물",
+    aspect: "1448 / 1086",
+    exhibitIds: ["exhibit_lobby_monument"],
+    placement: "인구변화 홀 게이트 문짝. 로비 중앙 카드는 제거하고 문 장면에 통합",
+    promptSummary:
+      "인구·복지·환경·AI·재정전망·정책 선택을 상징하는 여섯 기둥 조형물. 원형 받침대 포함.",
+  },
+  {
+    id: "concept-care",
+    src: "/images/museum/concept-care.jpg",
+    alt: "서로 다른 세대가 나란히 서 있고 따뜻한 빛줄기가 둘을 잇는 장면",
+    aspect: "4 / 3",
+    exhibitIds: ["exhibit_1g"],
+    placement: "인구변화관 1-G 벽면 개념 이미지",
+    promptSummary: "세대와 돌봄의 연결.",
+  },
+  {
+    id: "concept-city",
+    src: "/images/museum/concept-city.jpg",
+    alt: "일부 창만 켜진 도시 디오라마와 가로등, 작은 전차",
+    aspect: "4 / 3",
+    exhibitIds: ["exhibit_1f"],
+    placement: "인구변화관 1-F 벽면 개념 이미지",
+    promptSummary: "변화하는 도시와 생활 공간.",
+  },
+  {
+    id: "concept-climate",
+    src: "/images/museum/concept-climate.jpg",
+    alt: "해질녘 바다 너머 풍력 터빈과 발전 시설 실루엣이 보이는 창가",
+    aspect: "4 / 3",
+    exhibitIds: ["exhibit_3a"],
+    placement: "환경관 3-A 벽면 개념 이미지",
+    promptSummary: "기후 대응과 미래 에너지.",
+  },
+  {
+    id: "concept-ai-power",
+    src: "/images/museum/concept-ai-power.jpg",
+    alt: "어두운 서버 복도를 따라 두꺼운 전력 케이블이 이어지는 장면",
+    aspect: "4 / 3",
+    exhibitIds: ["exhibit_3b"],
+    placement: "환경관 3-B 벽면 개념 이미지",
+    promptSummary: "AI·데이터센터·전력.",
+  },
+  {
+    id: "corridor-care",
+    src: "/images/museum/corridor-care.jpg",
+    alt: "여러 세대가 돌봄 시설과 놀이터를 함께 쓰는 동네 모형",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_corridor_01"],
+    placement: "회랑 01 옆 벽면",
+    promptSummary: "인구에서 복지로. 세대가 함께 쓰는 동네와 돌봄 공간.",
+  },
+  {
+    id: "corridor-green",
+    src: "/images/museum/corridor-green.jpg",
+    alt: "주택, 병원, 공원이 길로 이어진 생활 공간 모형",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_corridor_02"],
+    placement: "회랑 02 옆 벽면",
+    promptSummary: "복지에서 환경으로. 주거·건강·녹지가 연결된 생활.",
+  },
+  {
+    id: "corridor-power",
+    src: "/images/museum/corridor-power.jpg",
+    alt: "풍력 터빈과 변전 시설이 낮은 데이터 건물로 이어지는 모형",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_corridor_03"],
+    placement: "회랑 03 옆 벽면",
+    promptSummary: "환경에서 AI로. 에너지·전력망·데이터센터.",
+  },
+  {
+    id: "corridor-infra",
+    src: "/images/museum/corridor-infra.jpg",
+    alt: "공공건물, 병원, 주택, 작업장이 한 거리에 놓인 도시 모형",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_corridor_04"],
+    placement: "회랑 04 옆 벽면",
+    promptSummary: "AI에서 재정전망으로. 기술과 공공서비스가 한 도시.",
+  },
+  {
+    id: "corridor-table",
+    src: "/images/museum/corridor-table.jpg",
+    alt: "미니어처 도시와 빈 나무 말이 올려진 게임 테이블",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_corridor_05"],
+    placement: "회랑 05 옆 벽면",
+    promptSummary: "전망에서 게임으로. 방문객이 맡을 도시와 선택 테이블.",
+  },
+  {
+    id: "game-city-base",
+    src: "/images/museum/village/village-base.jpg",
+    alt: "아파트·학교·공원이 도로로 이어진 하나의 마을 모형",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_6c"],
+    placement: "나라살림게임 고정 마을. 구역 판 21장으로 시설을 교체",
+    promptSummary: "기준 마을. 생활·배움·공동 기반 세 구역.",
+  },
+  {
+    id: "game-tax-up",
+    src: "/images/museum/game-tax-up.jpg",
+    alt: "공공 보관함에 자원이 모이고 가계와 상점의 남는 몫은 줄어든 모형",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_6c"],
+    placement: "나라살림게임 tax_up 결과 장면",
+    promptSummary: "공공 예산 보관함 증가, 가계·기업 몫 감소. 선악 단정 없음.",
+  },
+  {
+    id: "game-tax-down",
+    src: "/images/museum/game-tax-down.jpg",
+    alt: "가계와 상점은 활발하고 공공 보관함의 여유는 줄어든 모형",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_6c"],
+    placement: "나라살림게임 tax_down 결과 장면",
+    promptSummary: "가계·상점 활동 증가, 공공 여유 감소.",
+  },
+  {
+    id: "game-tax-hold",
+    src: "/images/museum/game-tax-hold.jpg",
+    alt: "일상은 유지되지만 추가 서비스 칸은 비어 있는 모형",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_6c"],
+    placement: "나라살림게임 tax_hold 결과 장면",
+    promptSummary: "기존 활동 유지, 추가 재원 부족.",
+  },
+  {
+    id: "game-spend-care",
+    src: "/images/museum/game-spend-care.jpg",
+    alt: "돌봄 시설과 인력이 늘고 공공 보관함은 줄어든 모형",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_6c"],
+    placement: "나라살림게임 spend_care 결과 장면",
+    promptSummary: "돌봄 시설·인력 증가, 공공 가용 자원 감소.",
+  },
+  {
+    id: "game-spend-future",
+    src: "/images/museum/game-spend-future.jpg",
+    alt: "학교와 작업장은 확장되고 다른 서비스 건물은 그대로인 모형",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_6c"],
+    placement: "나라살림게임 spend_future 결과 장면",
+    promptSummary: "배움·일자리 확장, 다른 서비스 여력 제한.",
+  },
+  {
+    id: "game-spend-hold",
+    src: "/images/museum/game-spend-hold.jpg",
+    alt: "기존 시설은 유지되고 옆 공터는 비어 있는 모형",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_6c"],
+    placement: "나라살림게임 spend_hold 결과 장면",
+    promptSummary: "기존 시설 유지, 새 지원 공간 없음.",
+  },
+  {
+    id: "game-cut-grant",
+    src: "/images/museum/game-cut-grant.jpg",
+    alt: "중앙 곳간은 차고 지역 학교·서비스는 작아진 모형",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_6c"],
+    placement: "나라살림게임 cut_grant 결과 장면",
+    promptSummary: "중앙 곳간 여유 증가, 지역 학교·서비스 규모 축소.",
+  },
+  {
+    id: "game-borrow-keep",
+    src: "/images/museum/game-borrow-keep.jpg",
+    alt: "현재 서비스는 켜져 있고 옆으로 넘긴 상환 표식이 쌓인 모형",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_6c"],
+    placement: "나라살림게임 borrow_keep 결과 장면",
+    promptSummary: "현재 서비스 유지, 미래로 넘긴 상환 부담 증가.",
+  },
+  {
+    id: "game-tighten-rule",
+    src: "/images/museum/game-tighten-rule.jpg",
+    alt: "미래 부담 더미는 작고 현재 공사는 멈춰 있는 모형",
+    aspect: "16 / 9",
+    exhibitIds: ["exhibit_6c"],
+    placement: "나라살림게임 tighten_rule 결과 장면",
+    promptSummary: "미래 상환 부담 감소, 현재 시설·활동 제한.",
+  },
+];
+
+export function generatedVisualFor(exhibitId: string) {
+  return GENERATED_MUSEUM_IMAGES.find((item) => item.exhibitIds.includes(exhibitId));
+}
