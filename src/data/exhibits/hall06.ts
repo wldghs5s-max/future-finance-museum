@@ -1,4 +1,4 @@
-import { cite } from "../citations";
+import { cite, C } from "../citations";
 import { ex, m, t } from "./build";
 
 const hall = "HALL 06: 나라살림게임 랩";
@@ -100,8 +100,15 @@ export const hall06Exhibits = {
       "이 관의 게임은 교육용 가상 살림입니다. 숫자는 자료 발표 시점 기준이며 이후 달라질 수 있습니다. 실제 예산은 열린재정과 국민참여예산에서, 다른 교육 게임은 PERI에서 이어서 볼 수 있습니다. 외부 사이트가 이 체험을 대신하지는 않습니다.",
     kind: "peri_game_rule",
     featuredMetrics: [
-      m("열린재정", "재정 공개", "기획재정부", "실제 예산 흐름", "source_body", { highlight: true, citationId: "open_fiscal" }),
-      m("PERI 게임", "외부 교육 게임", "참고 자료", "이 관의 체험을 대신하지 않음", "peri_game_rule", { citationId: "peri_game" }),
+      m("열린재정", "재정 공개", "기획재정부", "실제 예산 흐름", "source_body", {
+        highlight: true,
+        citationId: "open_fiscal",
+        href: C.open_fiscal.url,
+      }),
+      m("PERI 게임", "외부 교육 게임", "참고 자료", "이 관의 체험을 대신하지 않음", "peri_game_rule", {
+        citationId: "peri_game",
+        href: C.peri_game.url,
+      }),
     ],
     causes: [],
     responses: ["지도와 용어사전에서 출처와 참여 경로를 다시 볼 수 있습니다."],
